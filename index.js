@@ -13,6 +13,6 @@ app.set('view engine','ejs')
 
 app.use('/api',apiRouter)
 
-app.listen(8080,()=>{
+app.listen(process.env.PORT,()=>{
     console.log('Servidor corriendo')
 })
