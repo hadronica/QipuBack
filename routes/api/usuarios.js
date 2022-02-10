@@ -21,7 +21,6 @@ router.post('/',[
     check('ruc').custom(existeRuc),
     check('email','El email no es valido').isEmail(),
     check('email_r','El email no es valido').isEmail(),
-    check('status','El usuario no esta disponible').isIn([true]),
     check('password','El password debe ser más de 6 letras').isLength({min:6}),
     validarCampo
 ],crearUser)
