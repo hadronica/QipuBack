@@ -1,0 +1,62 @@
+
+module.exports=(sequelize,type)=>{
+    return sequelize.define('users',{
+        id:{
+            type:type.INTEGER,
+            autoIncrement:true,
+            primaryKey:true,
+        },
+        name:{
+            type:type.STRING,
+        },
+        password:{
+            type:type.STRING(150)
+        },
+        email:{
+            type:type.STRING
+        },
+        status:{
+            type:type.BOOLEAN,
+            defaultValue:true
+        },
+        role:{
+            type:type.STRING,
+            defaultValue:'PUBLIC_USER'
+        },
+        phone:{
+            type:type.STRING
+        },
+        ruc:{
+            type:type.STRING,
+            primaryKey:true,
+        },
+        razon_social:{
+            type:type.STRING
+        },
+        sector_social:{
+            type:type.STRING
+        },
+        facturacion_anual:{
+            type:type.STRING
+        },
+        name_r:{
+            type:type.STRING
+        },
+        cargo:{
+            type:type.STRING
+        },
+        typeDocumento:{
+            type:type.BOOLEAN
+        },
+        document:{
+            type:type.INTEGER
+        },
+        email_r:{
+            type:type.STRING
+        },
+        pep:{
+            type:type.BOOLEAN
+        }
+
+    })
+}
