@@ -17,9 +17,17 @@ const crearUser=async(req,res)=>{
 }
 
 const loginUser=async(req,res)=>{
-    const user=await User.findOne({where:{email:req.body.email,status:true}})
+    const user=await User.findOne({where:{email:req.body.email}})
+    if(!user.status){
+        res.status(401).json({msg:'usuario denegado'})
+    }
     if(user){
-
+        const igualar=bcrypt.compareSync(req.body.password,user.password)
+        if (igualar) {
+            res.json({msg:'ok'})
+        } else {
+            res.status(401).json({msg:'Error en usuario/contraseña'})
+        }
     }else{
         res.status(401).json({msg:'Error en usuario/contraseña'})
     }

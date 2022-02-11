@@ -12,8 +12,10 @@ const router=require('express').Router()
 //     res.json(users)
 // })
 
+//LOGEAR USER---
 router.post('/login',[
-
+    check('email','El email no es valido').isEmail(),
+    validarCampo
 ],loginUser)
 
 //CREAR USER---
