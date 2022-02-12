@@ -22,7 +22,7 @@ const generarJWTLink=(ruc,email)=>{
     return new Promise((resolve,reject)=>{
         const payload={ruc,email}
         jwt.sign(payload,secret,{
-            expiresIn:'15m'
+            expiresIn:'24h'
         },(err,token)=>{
             if(err){
                 console.log(err)

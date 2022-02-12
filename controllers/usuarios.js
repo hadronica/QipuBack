@@ -34,32 +34,25 @@ const loginUser=async(req,res)=>{
 }
 const forgotPassword=async(req,res)=>{
     const {email,ruc}=req.body
-    const token=generarJWTLink(ruc,email)
-    const link=`http://localhost:8080/api/usuarios/reset-password/${ruc}/${token}`
-    const template=templateResetear(ruc,link)
+    const user= await User.findOne({where:{ruc:ruc}})
+    const token=await generarJWTLink(ruc,email)
+    const link=`http://localhost:8080/api/usuarios/reset-password/${token}/${ruc}`
+    const template=await templateResetear(user.name,link)
     await emailResetear(email,template)
-    res.json({msg:'ok'})
+    res.json({msg:token})
 }
 
-const verificarPassword=async(req,res)=>{
-    const {ruc,token}=req.params
-    
-    try {
-        verifyJWT(token,key)
-        res.render('reset-password',{ruc:ruc})
-    } catch (error) {
-        res.json({error})
-    }
-}
-//
 const resetPassword=async(req,res)=>{
-    const {ruc,token}=req.params
+    const {token,ruc}=req.params
     const {password,password2}=req.body
     try {
+        verifyJWT(token,key)
         if(password===password2){
             const newPassport=bcrypt.hashSync(password)
             await User.update({password:newPassport},{where:{ruc:ruc}})
-            res.json({msg:'todo ok'})
+            res.json({msg:'clave cambiada'})
+        }else{
+            res.status(401).json({msg:'las claves son distintas'})
         }
     } catch (error) {
         res.status(400).json({msg:'mal token'})
@@ -82,6 +75,5 @@ module.exports={
     loginUser,
     deleteUser,
     forgotPassword,
-    verificarPassword,
     resetPassword
 }

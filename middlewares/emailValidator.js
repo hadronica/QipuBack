@@ -51,10 +51,10 @@ const templateVerificar=(name)=>{
             <a href="http://localhost:8080/confirmacion.html"> Confirmar Cuenta </a>
     `
 }
-const templateResetear=(ruc,link)=>{
+const templateResetear=(name,link)=>{
     return `
         <div id="email_content">
-            <h2>Hola</h2>
+            <h2>Hola ${name}</h2>
             <p> Para cambiar tu contraseña ingresa aqui</p>
             <a href=${link}> Confirmar Cuenta </a>
     `
