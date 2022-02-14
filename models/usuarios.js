@@ -20,8 +20,8 @@ module.exports=(sequelize,type)=>{
             defaultValue:true
         },
         role:{
-            type:type.STRING,
-            defaultValue:'PUBLIC_USER'
+            type:type.INTEGER,
+            defaultValue:2
         },
         phone:{
             type:type.STRING
@@ -30,32 +30,34 @@ module.exports=(sequelize,type)=>{
             type:type.STRING,
             primaryKey:true,
         },
-        razon_social:{
+        company_name:{
             type:type.STRING
         },
-        sector_social:{
+        social_sector:{
             type:type.STRING
         },
-        facturacion_anual:{
+        annual_income:{
             type:type.STRING
         },
         name_r:{
             type:type.STRING
         },
-        cargo:{
+        position:{
             type:type.STRING
         },
-        typeDocumento:{
-            type:type.BOOLEAN
+        typeDocument:{
+            type:type.BOOLEAN,
+            defaultValue:1
         },
         document:{
-            type:type.INTEGER
+            type:type.STRING
         },
         email_r:{
             type:type.STRING
         },
         pep:{
-            type:type.BOOLEAN
+            type:type.BOOLEAN,
+            defaultValue:0
         }
 
     })

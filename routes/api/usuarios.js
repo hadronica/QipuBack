@@ -11,9 +11,10 @@ router.post('/login',[
 ],loginUser)
 
 //CREAR USER---
-router.post('/',[
+router.post('/sign-in',[
     check('ruc').custom(existeRuc),
     check('ruc','El ruc es obligatorio').not().isEmpty(),
+    check('ruc','El ruc debe ser de 11 digitos').isLength({min:11,max:11}),
     check('email','El email no es valido').isEmail(),
     check('email_r','El email no es valido').isEmail(),
     check('password','El password debe ser más de 6 letras').isLength({min:6}),

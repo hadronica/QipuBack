@@ -9,7 +9,7 @@ const crearUser=async(req,res)=>{
     try {
         req.body.password=bcrypt.hashSync(req.body.password)
         const user= await User.create(req.body)
-        res.json(user)
+        res.status(200).json({status:user.status,role:user.role})
     } catch (error) {
         console.log(error)
         res.status(400).json(error)
@@ -24,12 +24,12 @@ const loginUser=async(req,res)=>{
     if(user){
         const igualar=bcrypt.compareSync(req.body.password,user.password)
         if (igualar) {
-            res.json({msg:'ok'})
+            res.status(200).json({status:user.status,role:user.role})
         } else {
-            res.status(401).json({msg:'Error en usuario/contraseña'})
+            res.status(401).json({msg:'Error en contraseña'})
         }
     }else{
-        res.status(401).json({msg:'Error en usuario/contraseña'})
+        res.status(401).json({msg:'Error en email'})
     }
 }
 const forgotPassword=async(req,res)=>{
