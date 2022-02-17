@@ -18,9 +18,9 @@ const generarJWT=(ruc,email)=>{
         })
     })
 }
-const generarJWTLink=(ruc,email)=>{
+const generarJWTLink=(password,email)=>{
     return new Promise((resolve,reject)=>{
-        const payload={ruc,email}
+        const payload={password,email}
         jwt.sign(payload,secret,{
             expiresIn:'24h'
         },(err,token)=>{
@@ -37,6 +37,9 @@ const generarJWTLink=(ruc,email)=>{
 const verifyJWT=(token,key)=>{
     try {
         const payload=jwt.verify(token,key)
+        if(!payload){
+            throw new Error('token invalido')
+        }
     } catch (error) {
         console.log(error)
     }

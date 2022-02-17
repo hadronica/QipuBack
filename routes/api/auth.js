@@ -14,7 +14,7 @@ router.post('/',[
     if(existeUser){
         res.status(401).json({validate:false,msg:`El ruc ${ruc} ya existe`})
     }else{
-        res.status(200).json({validate:true})
+        return res.status(200).json({validate:true})
     }
  
 })

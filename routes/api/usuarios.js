@@ -1,12 +1,14 @@
 const {check}=require('express-validator')
 const { crearUser, loginUser, deleteUser, forgotPassword, resetPassword } = require('../../controllers/usuarios')
 const { validarCampo } = require('../../middlewares/validarCampo')
-const { existeRuc, noExisteRuc, noExisteEmail } = require('../../middlewares/dbValidator')
+const { existeRuc, noExisteRuc, noExisteEmail, existeEmail } = require('../../middlewares/dbValidator')
+const { validarJWT } = require('../../middlewares/validarJWT')
 const router=require('express').Router()
 
 //LOGEAR USER---
 router.post('/login',[
     check('email','El email no es valido').isEmail(),
+    check('email').custom(noExisteEmail),
     validarCampo
 ],loginUser)
 
@@ -16,6 +18,7 @@ router.post('/sign-in',[
     check('ruc','El ruc es obligatorio').not().isEmpty(),
     check('ruc','El ruc debe ser de 11 digitos').isLength({min:11,max:11}),
     check('email','El email no es valido').isEmail(),
+    check('email').custom(existeEmail),
     check('email_r','El email no es valido').isEmail(),
     check('password','El password debe ser más de 6 letras').isLength({min:6}),
     validarCampo
@@ -29,8 +32,8 @@ router.post('/forgot-password',[
     validarCampo
 ],forgotPassword)
 
-router.post('/reset-password/:token/:ruc',[
-    check('ruc').custom(noExisteRuc),
+router.post('/reset-password/:token',[
+    check('token').custom(validarJWT),
     check('password','El password debe ser más de 6 letras').isLength({min:6}),
     check('password2','El password debe ser más de 6 letras').isLength({min:6}),
     check('password','La contraseña es obligatoria').not().isEmpty(),

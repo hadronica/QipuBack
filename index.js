@@ -1,12 +1,16 @@
 const { response } = require('express')
 const express =require('express')
+const cors = require('cors')
 require('dotenv').config()
-const apiRouter=require('./routes/api')
-const bodyParser=require('body-parser')
-const app=express()
-
 require('./db')
 
+const apiRouter=require('./routes/api')
+const bodyParser=require('body-parser')
+
+
+const app=express()
+
+app.use(cors())
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
 

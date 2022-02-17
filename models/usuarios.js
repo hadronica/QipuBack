@@ -1,64 +1,70 @@
+const Sequelize=require('sequelize')
+const {sequelize}=require('../db')
+const ContactModel = require('./contactos')
 
-module.exports=(sequelize,type)=>{
-    return sequelize.define('users',{
+const UserModel=sequelize.define('users',{
         id:{
-            type:type.INTEGER,
+            type:Sequelize.INTEGER,
             autoIncrement:true,
             primaryKey:true,
         },
         name:{
-            type:type.STRING,
+            type:Sequelize.STRING,
         },
         password:{
-            type:type.STRING(150)
+            type:Sequelize.STRING(150)
         },
         email:{
-            type:type.STRING
+            type:Sequelize.STRING
         },
         status:{
-            type:type.BOOLEAN,
+            type:Sequelize.BOOLEAN,
             defaultValue:true
         },
         role:{
-            type:type.INTEGER,
+            type:Sequelize.INTEGER,
             defaultValue:2
         },
         phone:{
-            type:type.STRING
+            type:Sequelize.STRING
         },
         ruc:{
-            type:type.STRING,
-            primaryKey:true,
+            type:Sequelize.STRING,
         },
         company_name:{
-            type:type.STRING
+            type:Sequelize.STRING
         },
         social_sector:{
-            type:type.STRING
+            type:Sequelize.STRING
         },
         annual_income:{
-            type:type.STRING
+            type:Sequelize.STRING
         },
         name_r:{
-            type:type.STRING
+            type:Sequelize.STRING
         },
         position:{
-            type:type.STRING
+            type:Sequelize.STRING
         },
         typeDocument:{
-            type:type.BOOLEAN,
+            type:Sequelize.BOOLEAN,
             defaultValue:1
         },
         document:{
-            type:type.STRING
+            type:Sequelize.STRING
         },
         email_r:{
-            type:type.STRING
+            type:Sequelize.STRING
         },
         pep:{
-            type:type.BOOLEAN,
+            type:Sequelize.BOOLEAN,
             defaultValue:0
+        },
+        uuid:{
+            type:Sequelize.STRING
         }
+})
+UserModel.hasMany(ContactModel)
 
-    })
-}
+
+module.exports=UserModel

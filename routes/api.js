@@ -1,9 +1,11 @@
 const router=require('express').Router()
 const apiUserRouter=require('./api/usuarios')
 const apiAuthRouter=require('./api/auth')
+const apiContactRouter=require('./api/contactos')
 
 router.use('/usuarios',apiUserRouter)
 router.use('/auth',apiAuthRouter)
+router.use('/contactos',apiContactRouter)
 
 
 module.exports=router
