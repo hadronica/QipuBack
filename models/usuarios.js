@@ -62,6 +62,9 @@ const UserModel=sequelize.define('users',{
         },
         uuid:{
             type:Sequelize.STRING
+        },
+        terms_conditions:{
+            type:Sequelize.BOOLEAN,
         }
 })
 UserModel.hasMany(ContactModel)

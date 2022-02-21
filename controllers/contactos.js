@@ -20,7 +20,7 @@ const listarContactos=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.params.id}})
         const contactos=await Contact.findAll({where:{userId:user.id}})
-        res.status(200).json({contactos})
+        res.status(200).json({contacts})
     } catch (error) {
         console.log(error)
         res.status(400).json(error)
