@@ -35,10 +35,10 @@ const loginUser=async(req,res)=>{
     }
 }
 const forgotPassword=async(req,res)=>{
-    const {email,ruc}=req.body
+    const {email,ruc,url}=req.body
     const user= await User.findOne({where:{ruc:ruc,email:email}})
     const token=await generarJWTLink(user.password,email)
-    const link=`http://localhost:8080/api/usuarios/reset-password/${token}`
+    const link=`${url}${token}`
     const template=await templateResetear(user.name,link)
     await emailResetear(email,template)
     res.json({msg:token})
