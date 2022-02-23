@@ -32,7 +32,7 @@ router.post('/forgot-password',[
     validarCampo
 ],forgotPassword)
 
-router.post('/reset-password/:token',[
+router.post('/reset-password',[
     check('password','El password debe ser más de 6 letras').isLength({min:6}),
     check('password2','El password debe ser más de 6 letras').isLength({min:6}),
     check('password','La contraseña es obligatoria').not().isEmpty(),
