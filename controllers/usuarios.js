@@ -41,7 +41,7 @@ const forgotPassword=async(req,res)=>{
     const user= await User.findOne({where:{ruc:ruc,email:email}})
     const token=nanoid(6).toLocaleUpperCase()
     await user.update({resetpass:token},{where:{ruc:ruc}})
-    const template= templateResetear(user.name,token)
+    const template= templateResetear(user.name,token,user.email)
     await emailResetear(email,template)
     res.json({msg:'ok'})
 }
