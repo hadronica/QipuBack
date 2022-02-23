@@ -4,6 +4,8 @@ const {templateResetear, emailResetear } = require("../middlewares/emailValidato
 const { generarJWT, generarJWTLink } = require("../helpers/generarJWT");
 const { v4: uuidv4 } = require('uuid');
 const { validarJWT } = require('../middlewares/validarJWT');
+const { customAlphabet } = require('nanoid');
+const nanoid=customAlphabet('1234567890abcdefghijklmnopqrstuvwx')
 
 
 const crearUser=async(req,res)=>{
@@ -35,29 +37,31 @@ const loginUser=async(req,res)=>{
     }
 }
 const forgotPassword=async(req,res)=>{
-    const {email,ruc,url}=req.body
+    const {email,ruc}=req.body
     const user= await User.findOne({where:{ruc:ruc,email:email}})
-    const token=await generarJWTLink(user.password,email)
-    const link=`${url}${token}`
-    const template=await templateResetear(user.name,link)
+    const token=nanoid(6).toLocaleUpperCase()
+    await user.update({resetpass:token},{where:{ruc:ruc}})
+    const template= templateResetear(user.name,token)
     await emailResetear(email,template)
-    res.json({msg:token})
+    res.json({msg:'ok'})
 }
 
 const resetPassword=async(req,res)=>{
-    const {token}=req.params
-    const {password,password2}=req.body
+    const {password,password2,token}=req.body
+    const user=await User.findOne({where:{resetpass:token}})
+    if(!user){
+        return res.status(400).json({msg:'token invalido'})
+    }
     try {
-        const id=await validarJWT(token)
         if(password===password2){
             const newPassword=bcrypt.hashSync(password)
-            await User.update({password:newPassword},{where:{id:id}})
-            res.json({msg:'clave cambiada'})
+            await user.update({password:newPassword},{where:{resetpass:token}})
+            res.status(200).json({msg:'clave cambiada'})
         }else{
             return res.status(401).json({msg:'las claves son distintas'})
         }
     } catch (error) {
-        res.status(400).json({msg:'mal token'})
+        res.status(400).json({msg:'token invalido'})
     }
 }
 

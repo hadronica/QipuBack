@@ -33,7 +33,6 @@ router.post('/forgot-password',[
 ],forgotPassword)
 
 router.post('/reset-password/:token',[
-    check('token').custom(validarJWT),
     check('password','El password debe ser más de 6 letras').isLength({min:6}),
     check('password2','El password debe ser más de 6 letras').isLength({min:6}),
     check('password','La contraseña es obligatoria').not().isEmpty(),

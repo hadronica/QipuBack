@@ -65,7 +65,18 @@ const UserModel=sequelize.define('users',{
         },
         terms_conditions:{
             type:Sequelize.BOOLEAN,
+        },
+        resetpass:{
+            type:Sequelize.STRING
         }
+},{
+    hooks:{
+        afterUpdate(usuario){
+            setTimeout(()=>{
+                usuario.update({resetpass:null})
+            },120000)
+        }
+    }
 })
 UserModel.hasMany(ContactModel)
 

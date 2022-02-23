@@ -1,13 +1,12 @@
-const shortid = require("shortid")
 const User=require('../models/usuarios')
 const Contact=require('../models/contactos')
-
+const { nanoid } = require('nanoid')
 
 const crearContacto=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.params.id}})
         req.body.userId=user.id
-        req.body.uuid=shortid.generate()
+        req.body.uuid=nanoid(10)
         const contact= await Contact.create(req.body)
         res.status(200).json({status:contact.status})
     } catch (error) {
