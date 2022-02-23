@@ -2,17 +2,21 @@ const nodemailer = require("nodemailer");
 
 const mail={
     user:'mcorteztouzett@gmail.com',
-    pass:'S@skia123'
+    pass:'cvwlnpigarojrycl'
 }
 
   // create reusable transporter object using the default SMTP transport
 let transporter = nodemailer.createTransport({
-    service:'gmail',
+    host:'smtp.gmail.com',
+    port:465,
+    secure:true,
     auth: {
-      user: mail.user, // generated ethereal user
-      pass: mail.pass, // generated ethereal password
+        user: mail.user, // generated ethereal user
+        pass: mail.pass, // generated ethereal password
     },
 });
+
+transporter.verify()
 
 const emailVerificar=async(email,html)=>{
     try {
