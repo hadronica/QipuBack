@@ -1,6 +1,6 @@
 const {check}=require('express-validator')
 const { validarCampo } = require('../../middlewares/validarCampo')
-const { User } = require("../../db")
+const User=require('../../models/usuarios')
 
 
 const router=require('express').Router()
@@ -17,6 +17,16 @@ router.post('/',[
         return res.status(200).json({validate:true})
     }
  
+})
+
+router.post('/token',async(req,res)=>{
+    const {token}=req.body
+    const user=await User.findOne({where:{resetpass:token}})
+    if(!user){
+        return res.status(400).json({msg:'token invalido'})
+    }else{
+        res.status(200).json({validate:true})
+    }
 })
 
 
