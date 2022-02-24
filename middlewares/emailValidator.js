@@ -23,8 +23,7 @@ const emailVerificar=async(email,html)=>{
         await transporter.sendMail({
             from: mail.user, // sender address
             to: email, // list of receivers
-            subject: "Validación", // Subject line
-            text: "Hello world?", // plain text body
+            subject: "Validación de cuenta", // Subject line
             html: html, // html body
         });
         
@@ -37,8 +36,7 @@ const emailResetear=async(email,html)=>{
         await transporter.sendMail({
             from: mail.user, // sender address
             to: email, // list of receivers
-            subject: "Cambiar contraseña", // Subject line
-            text: "Hello world?", // plain text body
+            subject: "Cambio de contraseña", // Subject line
             html: html, // html body
         });
         
@@ -47,12 +45,12 @@ const emailResetear=async(email,html)=>{
     }
 }
 
-const templateVerificar=(name)=>{
+const templateVerificar=(name,id)=>{
     return `
         <div id="email_content">
             <h2>Hola ${name}</h2>
             <p> Para confirmar tu cuenta ingresa aqui</p>
-            <a href="http://localhost:8080/confirmacion.html"> Confirmar Cuenta </a>
+            <a href="http://localhost/api/usuarios/confirm-acc/${id}"> Confirmar Cuenta </a>
     `
 }
 const templateResetear=(name,token,email)=>{
