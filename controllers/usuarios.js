@@ -2,7 +2,6 @@ const User=require('../models/usuarios')
 const bcrypt=require('bcryptjs')
 const {templateResetear, emailResetear, templateVerificar, emailVerificar } = require("../middlewares/emailValidator")
 const { v4: uuidv4 } = require('uuid');
-const { validarJWT } = require('../middlewares/validarJWT');
 const { customAlphabet } = require('nanoid');
 const nanoid=customAlphabet('1234567890abcdefghijklmnopqrstuvwx')
 
@@ -25,28 +24,13 @@ const crearUser=async(req,res)=>{
     try {
         req.body.password=bcrypt.hashSync(req.body.password)
         req.body.uuid=uuidv4()
-        req.body.status=false
         const user= await User.create(req.body)
-        const template= templateVerificar(user.name,user.uuid)
+        const template= templateVerificar(user.name,user.email,user.ruc,user.company_name)
         await emailVerificar(req.body.email,template)
         res.status(200).json({status:user.status,role:user.role,id:user.uuid})
     } catch (error) {
         console.log(error)
         res.status(400).json(error)
-    }
-}
-
-const confirmarUser=async(req,res)=>{
-    const user=await User.findOne({where:{uuid:req.params.id}})
-    if(!user){
-        return res.status(401).json({msg:'invalid user'})
-    }
-    if(user){
-        await user.update({status:1},{where:{uuid:req.params.id}})
-        res.status(200).json({msg:'user validated'})
-    }
-    else{
-        return res.status(400).json({msg:'error'})
     }
 }
 
@@ -109,7 +93,6 @@ const deleteUser=async(req,res)=>{
 module.exports={
     mostrarUser,
     crearUser,
-    confirmarUser,
     loginUser,
     deleteUser,
     forgotPassword,

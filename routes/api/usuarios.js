@@ -1,8 +1,7 @@
 const {check}=require('express-validator')
-const { crearUser, loginUser, deleteUser, forgotPassword, resetPassword, confirmarUser, mostrarUser } = require('../../controllers/usuarios')
+const { crearUser, loginUser, deleteUser, forgotPassword, resetPassword, mostrarUser } = require('../../controllers/usuarios')
 const { validarCampo } = require('../../middlewares/validarCampo')
 const { existeRuc, noExisteRuc, noExisteEmail, existeEmail } = require('../../middlewares/dbValidator')
-const { validarJWT } = require('../../middlewares/validarJWT')
 const router=require('express').Router()
 
 
@@ -27,8 +26,6 @@ router.post('/sign-in',[
     check('password','El password debe ser más de 6 letras').isLength({min:6}),
     validarCampo
 ],crearUser)
-
-router.post('/confirm-acc/:id',confirmarUser)
 
 //RECUPERAR CONTRASEÑA---
 router.post('/forgot-password',[
