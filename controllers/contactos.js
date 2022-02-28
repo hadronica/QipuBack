@@ -18,8 +18,8 @@ const crearContacto=async(req,res)=>{
 const listarContactos=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.params.id}})
-        const contactos=await Contact.findAll({where:{userId:user.id}})
-        res.status(200).json({contactos})
+        const pagadores=await Contact.findAll({where:{userId:user.id}})
+        res.status(200).json({pagadores})
     } catch (error) {
         console.log(error)
         res.status(400).json(error)
@@ -29,8 +29,8 @@ const listarContactos=async(req,res)=>{
 const listarContacto=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.params.id}})
-        const contacto=await Contact.findOne({where:{userId:user.id,uuid:req.params.id_c}})
-        res.status(200).json({contacto})
+        const pagador=await Contact.findOne({where:{userId:user.id,uuid:req.params.id_c}})
+        res.status(200).json({pagador})
     } catch (error) {
         console.log(error)
         res.status(400).json(error)

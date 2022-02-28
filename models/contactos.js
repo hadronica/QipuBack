@@ -26,8 +26,8 @@ const ContactModel=sequelize.define('contacts',{
             type:Sequelize.STRING
         },
         status:{
-            type:Sequelize.BOOLEAN,
-            defaultValue:false
+            type:Sequelize.STRING,
+            defaultValue:"pending"
         },
         uuid:{
             type:Sequelize.STRING
