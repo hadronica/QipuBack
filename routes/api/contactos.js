@@ -23,6 +23,7 @@ router.get('/:id',[
     check('id').custom(noExisteID),
     validarCampo
 ],listarContactos)
+
 router.get('/:id/:id_c',[
     check('id','id invalido').not().isEmpty(),
     check('id_c','id invalido').not().isEmpty(),
