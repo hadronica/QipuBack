@@ -6,7 +6,7 @@ const router=require('express').Router()
 
 
 //MOSTRAR USER--
-router.post('/getinfo',mostrarUser)
+router.get('/getinfo',mostrarUser)
 
 //LOGEAR USER---
 router.post('/login',[

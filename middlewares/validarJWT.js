@@ -1,20 +1,15 @@
-const { response } = require('express')
-const jwt=require('jsonwebtoken')
 const User=require('../models/usuarios')
 
 
-const validarJWT=async(token)=>{
-    // const token=req.header('x-token')
-    if(!token){
-        throw new Error('no hay token')
+const validarJWTAdmin=async(token)=>{
+    const uuid=req.header('token')
+    if(!uuid){
+        throw new Error('invalid token')
     }
     try{
-        const {password,email}=jwt.verify(token,process.env.SECRETORPRIVATEKEY)
-        const user=await User.findOne({where:{password:password,email:email}})
+        const user=await User.findOne({where:{uuid:uuid}})
         if(!user){
-            throw new Error('token invalido')
-        }else{
-            return user.id
+            throw new Error('invalid token')
         }
     }catch(error){
         console.log(error)
@@ -22,5 +17,5 @@ const validarJWT=async(token)=>{
 }
 
 module.exports={
-    validarJWT
+    validarJWTAdmin
 }

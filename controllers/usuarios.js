@@ -8,12 +8,17 @@ const nanoid=customAlphabet('1234567890abcdefghijklmnopqrstuvwx')
 
 
 const mostrarUser=async(req,res)=>{
-    const user=await User.findOne({where:{uuid:req.body.id}})
+    const token=req.header('token')
+    const isAdmin=await User.findOne({where:{uuid:token,role:[0,1]}})
+    if(!isAdmin){
+        return res.status(401).json({msg:'permission denied'})
+    }
+    const user=await User.findAll({where:{role:2}})
     if(!user){
-        return res.status(401).json({msg:'invalid user'})
+        return res.status(401).json({msg:'users not found'})
     }
     if(user){
-        res.status(200).json({name:user.name,email:user.email,ruc:user.ruc})
+        res.status(200).json({user})
     }
     else{
         return res.status(400).json({msg:'error'}) 
