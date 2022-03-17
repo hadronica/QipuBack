@@ -1,6 +1,7 @@
 const { response } = require('express')
 const express =require('express')
 const cors = require('cors')
+const fileUpload=require('express-fileupload')
 require('dotenv').config()
 require('./db')
 
@@ -11,6 +12,11 @@ const bodyParser=require('body-parser')
 const app=express()
 
 app.use(cors())
+app.use(fileUpload({
+    useTempFiles:true,
+    tempFileDir:'/tmp/',
+    createParentPath:true
+}))
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
 
