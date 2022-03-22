@@ -1,8 +1,6 @@
 const fs=require('fs')
 require('dotenv').config()
 const User=require('../models/usuarios')
-const fileUpload=require('express-fileupload')
-
 
 const aws=require('aws-sdk')
 const s3=new aws.S3({
@@ -10,6 +8,7 @@ const s3=new aws.S3({
     accessKeyId:process.env.AWSID,
     secretAccessKey:process.env.AWSKEY
 })
+
 const listFiles=async(req,res)=>{
     const user=await User.findOne({where:{uuid:req.headers.token}})
     if(!user){return res.status(401).json({msg:'User not found'})}

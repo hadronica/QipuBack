@@ -1,5 +1,5 @@
 const { check } = require('express-validator')
-const { crearContacto, listarContacto, listarContactos, modificarContacto, eliminarContacto } = require('../../controllers/contactos')
+const { crearContacto, listarContacto, listarContactos, modificarContacto, eliminarContacto, listarContactosUserAdmin } = require('../../controllers/contactos')
 const { noExisteID, noExisteIDContacto } = require('../../middlewares/dbValidator')
 const { validarCampo } = require('../../middlewares/validarCampo')
 
@@ -18,6 +18,8 @@ router.post('/:id',[
 ],crearContacto)
 
 //LISTAR CONTACTOS
+router.get('/pagadores-admin',listarContactosUserAdmin)
+
 router.get('/:id',[
     check('id','id invalido').not().isEmpty(),
     check('id').custom(noExisteID),
@@ -31,6 +33,7 @@ router.get('/:id/:id_c',[
     check('id_c').custom(noExisteIDContacto),
     validarCampo
 ],listarContacto)
+
 
 //MODIFICAR CONTACTO
 router.post('/:id/:id_c',[

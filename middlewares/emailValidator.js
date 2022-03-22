@@ -1,8 +1,8 @@
 const nodemailer = require("nodemailer");
 
 const mail={
-    user: process.env.USER_EMAIL,
-    pass:process.env.USER_PASS
+    user: 'mcorteztouzett@gmail.com',
+    pass:'cvwlnpigarojrycl'
 }
 
   // create reusable transporter object using the default SMTP transport
@@ -12,7 +12,7 @@ let transporter = nodemailer.createTransport({
     secure:true,
     auth: {
         user: mail.user, // generated ethereal user
-        pass: mail.pass, // generated ethereal password
+        pass: mail.pass // generated ethereal password
     },
 });
 
@@ -44,6 +44,19 @@ const emailResetear=async(email,html)=>{
         console.log(error)
     }
 }
+const emailFactura=async(email,html)=>{
+    try {
+        await transporter.sendMail({
+            from: mail.user, // sender address
+            to: email, // list of receivers
+            subject: "Factura creada", // Subject line
+            html: html, // html body
+        });
+        
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 const templateVerificar=(name,email,ruc,company_name)=>{
     return `
@@ -57,10 +70,19 @@ const templateResetear=(name,token,email)=>{
     `
 }
 
+const templateFactura=(name,n_factura)=>{
+    return `
+        <h1>Hola ${name}</h1>
+        <h2> tu facturo nº ${n_factura} ha sido creada exitosamente </h2>
+    `
+}
+
 module.exports={
     emailResetear,
     emailVerificar,
+    emailFactura,
     templateResetear,
-    templateVerificar
+    templateVerificar,
+    templateFactura
 }
 

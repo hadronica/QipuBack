@@ -26,6 +26,41 @@ const listarContactos=async(req,res)=>{
     }
 }
 
+const listarContactosAdmin=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const users=await User.findAll()
+        const contacts=await Contact.findAll()
+        
+        return res.status(200).json({users,contacts})
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+const listarContactosUserAdmin=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const contacts=await User.findAll({where:{role:2},include:[Contact]})
+        const usercontact=contacts.map((item)=>{
+            return {
+                id:item.id,
+                name:item.name,
+                company_name:item.company_name,
+                contacts:item.contacts
+            }
+        })
+        return res.status(200).json(usercontact)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+
 const listarContacto=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.params.id}})
@@ -65,6 +100,8 @@ module.exports={
     crearContacto,
     listarContactos,
     listarContacto,
+    listarContactosAdmin,
+    listarContactosUserAdmin,
     modificarContacto,
     eliminarContacto
 }

@@ -1,5 +1,6 @@
 const Sequelize=require('sequelize')
 const {sequelize}=require('../db')
+const BillingModel=require('./facturas')
 
 const ContactModel=sequelize.define('contacts',{
         contact_id:{
@@ -33,6 +34,6 @@ const ContactModel=sequelize.define('contacts',{
             type:Sequelize.STRING
         }
     })
-
+ContactModel.hasMany(BillingModel)
 
 module.exports=ContactModel
