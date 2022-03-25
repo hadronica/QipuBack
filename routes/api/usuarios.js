@@ -43,7 +43,9 @@ router.post('/reset-password',[
     validarCampo
 ],resetPassword)
 
-router.post('/emailsender',emailUser)
+router.post('/emailsender',[
+    check('email').custom(noExisteEmail)
+],emailUser)
 
 // router.delete('/',[
 //     check('ruc').custom(existeRuc),
