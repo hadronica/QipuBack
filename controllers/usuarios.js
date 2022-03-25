@@ -1,11 +1,24 @@
 const User=require('../models/usuarios')
 const bcrypt=require('bcryptjs')
-const {templateResetear, emailResetear, templateVerificar, emailVerificar } = require("../middlewares/emailValidator")
+const {templateResetear, emailResetear, templateVerificar, emailVerificar, emailDefault } = require("../middlewares/emailValidator")
 const { v4: uuidv4 } = require('uuid');
 const { customAlphabet } = require('nanoid');
 const nanoid=customAlphabet('1234567890abcdefghijklmnopqrstuvwx')
 
-
+const emailUser=async(req,res)=>{
+    try {
+        const token=req.header('token')
+        const isAdmin=await User.findOne({where:{uuid:token,role:[0,1]}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        // const user=User.findOne({where:{uuid:req.body.id}})
+        await emailDefault(req.body.email,req.body.html,req.body.subject)
+        res.status(200).json({msg:'email sent successfully'})
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
 
 const mostrarUser=async(req,res)=>{
     const token=req.header('token')
@@ -34,7 +47,6 @@ const crearUser=async(req,res)=>{
         await emailVerificar(req.body.email,template)
         res.status(200).json({status:user.status,role:user.role,id:user.uuid})
     } catch (error) {
-        console.log(error)
         res.status(400).json(error)
     }
 }
@@ -57,13 +69,18 @@ const loginUser=async(req,res)=>{
 }
 
 const forgotPassword=async(req,res)=>{
-    const {email,ruc}=req.body
-    const user= await User.findOne({where:{ruc:ruc,email:email}})
-    const token=nanoid(6).toLocaleUpperCase()
-    await user.update({resetpass:token},{where:{ruc:ruc}})
-    const template= templateResetear(user.name,token,user.email)
-    await emailResetear(email,template)
-    res.json({msg:'ok'})
+    try {
+        const {email,ruc}=req.body
+        const user= await User.findOne({where:{ruc:ruc,email:email}})
+        const token=nanoid(6).toLocaleUpperCase()
+        await user.update({resetpass:token},{where:{ruc:ruc}})
+        const template= templateResetear(user.name,token,user.email)
+        await emailResetear(email,template)
+        res.json({msg:'ok'})
+        
+    } catch (error) {
+        return res.status(400).json(error)
+    }
 }
 
 const resetPassword=async(req,res)=>{
@@ -101,5 +118,6 @@ module.exports={
     loginUser,
     deleteUser,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    emailUser
 }

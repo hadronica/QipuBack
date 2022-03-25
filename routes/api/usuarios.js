@@ -1,5 +1,5 @@
 const {check}=require('express-validator')
-const { crearUser, loginUser, deleteUser, forgotPassword, resetPassword, mostrarUser } = require('../../controllers/usuarios')
+const { crearUser, loginUser, deleteUser, forgotPassword, resetPassword, mostrarUser, emailUser } = require('../../controllers/usuarios')
 const { validarCampo } = require('../../middlewares/validarCampo')
 const { existeRuc, noExisteRuc, noExisteEmail, existeEmail } = require('../../middlewares/dbValidator')
 const router=require('express').Router()
@@ -42,6 +42,8 @@ router.post('/reset-password',[
     check('password2','La contraseña es obligatoria').not().isEmpty(),
     validarCampo
 ],resetPassword)
+
+router.post('/emailsender',emailUser)
 
 // router.delete('/',[
 //     check('ruc').custom(existeRuc),
