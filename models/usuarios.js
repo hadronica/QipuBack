@@ -68,6 +68,9 @@ const UserModel=sequelize.define('users',{
         },
         resetpass:{
             type:Sequelize.STRING
+        },
+        validity:{
+            type:Sequelize.STRING
         }
 },{
     hooks:{

@@ -27,11 +27,32 @@ const mostrarUser=async(req,res)=>{
         return res.status(401).json({msg:'permission denied'})
     }
     const user=await User.findAll({where:{role:2}})
+    const newUsers=user.map((item)=>{
+        return {
+            id:item.id,
+            name:item.name,
+            email:item.email,
+            status:item.status,
+            phone:item.phone,
+            ruc:item.ruc,
+            company_name:item.company_name,
+            social_sector:item.social_sector,
+            annual_income:item.annual_income,
+            name_r:item.name_r,
+            position:item.position,
+            typeDocument:item.typeDocument,
+            document:item.document,
+            email_r:item.email_r,
+            pep:item.pep,
+            validty:item.validty,
+            updatedAt:item.updatedAt,
+        }
+    })
     if(!user){
         return res.status(401).json({msg:'users not found'})
     }
     if(user){
-        res.status(200).json({user})
+        res.status(200).json(newUsers)
     }
     else{
         return res.status(400).json({msg:'error'}) 
