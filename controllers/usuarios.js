@@ -20,8 +20,7 @@ const emailUser=async(req,res)=>{
     }
 }
 const mostrarUser=async(req,res)=>{
-    const token=req.header('token')
-    const user=await User.findOne({where:{uuid:token}})
+    const user=await User.findOne({where:{uuid:req.body.token}})
     const newUser=Object.keys(user).map((item)=>{
         return {
             id:item.id,
@@ -54,8 +53,7 @@ const mostrarUser=async(req,res)=>{
     }
 }
 const mostrarUsers=async(req,res)=>{
-    const token=req.header('token')
-    const isAdmin=await User.findOne({where:{uuid:token,role:[0,1]}})
+    const isAdmin=await User.findOne({where:{uuid:req.body.token,role:[0,1]}})
     if(!isAdmin){
         return res.status(401).json({msg:'permission denied'})
     }
