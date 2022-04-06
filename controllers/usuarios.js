@@ -19,8 +19,41 @@ const emailUser=async(req,res)=>{
         res.status(400).json(error)
     }
 }
-
 const mostrarUser=async(req,res)=>{
+    const token=req.header('token')
+    const user=await User.findOne({where:{uuid:token}})
+    const newUser=Object.keys(user).map((item)=>{
+        return {
+            id:item.id,
+            name:item.name,
+            email:item.email,
+            status:item.status,
+            phone:item.phone,
+            ruc:item.ruc,
+            company_name:item.company_name,
+            social_sector:item.social_sector,
+            annual_income:item.annual_income,
+            name_r:item.name_r,
+            position:item.position,
+            typeDocument:item.typeDocument,
+            document:item.document,
+            email_r:item.email_r,
+            pep:item.pep,
+            validty:item.validty,
+            updatedAt:item.updatedAt,
+        }
+    })
+    if(!user){
+        return res.status(401).json({msg:'users not found'})
+    }
+    if(user){
+        res.status(200).json(user)
+    }
+    else{
+        return res.status(400).json({msg:'error'}) 
+    }
+}
+const mostrarUsers=async(req,res)=>{
     const token=req.header('token')
     const isAdmin=await User.findOne({where:{uuid:token,role:[0,1]}})
     if(!isAdmin){
@@ -134,6 +167,7 @@ const deleteUser=async(req,res)=>{
 }
 
 module.exports={
+    mostrarUsers,
     mostrarUser,
     crearUser,
     loginUser,

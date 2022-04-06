@@ -1,12 +1,14 @@
 const {check}=require('express-validator')
-const { crearUser, loginUser, deleteUser, forgotPassword, resetPassword, mostrarUser, emailUser } = require('../../controllers/usuarios')
+const { crearUser, loginUser, forgotPassword, resetPassword, mostrarUsers,mostrarUser, emailUser } = require('../../controllers/usuarios')
 const { validarCampo } = require('../../middlewares/validarCampo')
 const { existeRuc, noExisteRuc, noExisteEmail, existeEmail } = require('../../middlewares/dbValidator')
 const router=require('express').Router()
 
 
-//MOSTRAR USER--
-router.get('/getinfo',mostrarUser)
+//MOSTRAR USERS ADMIN--
+router.get('/getinfo',mostrarUsers)
+//MOSTRAR USER LOGIN--
+router.get('/getuser',mostrarUser)
 
 //LOGEAR USER---
 router.post('/login',[
