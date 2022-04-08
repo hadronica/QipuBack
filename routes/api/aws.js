@@ -4,7 +4,7 @@ const { validarCampo } = require('../../middlewares/validarCampo')
 const router=require('express').Router()
 
 
-router.get('/listfiles',listFiles)
+router.post('/listfiles',listFiles)
 
 router.get('/download/:type',[
     check('type').isIn(['ruc','dni','rtt','repre']),
