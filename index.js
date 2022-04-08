@@ -5,6 +5,7 @@ const fileUpload=require('express-fileupload')
 require('dotenv').config()
 require('./db')
 
+const port=process.env.PORT||8000
 const apiRouter=require('./routes/api')
 const bodyParser=require('body-parser')
 
@@ -22,6 +23,6 @@ app.use(bodyParser.urlencoded({extended:true}))
 
 app.use('/api',apiRouter)
 
-app.listen(process.env.PORT,()=>{
-    console.log('Servidor corriendo')
+app.listen(port,()=>{
+    console.log('App running on port ',port)
 })
