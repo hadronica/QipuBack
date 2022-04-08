@@ -11,8 +11,8 @@ const bodyParser=require('body-parser')
 
 
 const app=express()
-
-app.use(cors())
+const whiteList=['https://qipu.hadronica.pe/','http://localhost:4000']
+app.use(cors({origin:whiteList}))
 app.use(fileUpload({
     useTempFiles:true,
     tempFileDir:'/tmp/',

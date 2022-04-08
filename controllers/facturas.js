@@ -38,17 +38,28 @@ const createBill=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
         req.body.contactContactId=user.id
-        const file=req.files.file
-        const {tempFilePath}=req.files.file
-        fs.readFile(tempFilePath, function(err, data) {
-            let params={Bucket:process.env.AWSBUCKET,Key:`${user.name}/pagadores/${req.body.contactName}/${req.body.billing_id}`,Body: data,ACL: 'public-read',ContentType:file.mimetype}
+        const pdfFile=req.files.pdf
+        const tempPdfPath=pdfFile.tempFilePath
+        fs.readFile(tempPdfPath, function(err, data) {
+            let params={Bucket:process.env.AWSBUCKET,Key:`${user.name}/pagadores/${req.body.contactName}/PDF${req.body.billing_id}`,Body: data,ACL: 'public-read',ContentType:pdfFile.mimetype}
             s3.upload(params, function(err, data) {
-                fs.unlink(tempFilePath, function(err) {
+                fs.unlink(tempPdfPath, function(err) {
                     if (err) {
                       throw new Error(err)
                     }
                 })
-                return req.body.file_link=data.Location
+            })
+        })
+        const xmlFile=req.files.xml
+        const tempXmlPath=xmlFile.tempFilePath
+        fs.readFile(tempXmlPath, function(err, data) {
+            let params={Bucket:process.env.AWSBUCKET,Key:`${user.name}/pagadores/${req.body.contactName}/XML${req.body.billing_id}`,Body: data,ACL: 'public-read',ContentType:xmlFile.mimetype}
+            s3.upload(params, function(err, data) {
+                fs.unlink(tempXmlPath, function(err) {
+                    if (err) {
+                      throw new Error(err)
+                    }
+                })
             })
         })
         await Billing.create(req.body)
