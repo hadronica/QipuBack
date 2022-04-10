@@ -60,6 +60,9 @@ const BillingModel=sequelize.define('billings',{
     },
     n_commercial_qipu:{
         type:Sequelize.STRING
+    },
+    bank_name:{
+        type:Sequelize.STRING
     }
 })
 
