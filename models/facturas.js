@@ -3,7 +3,7 @@ const {sequelize}=require('../db')
 
 const BillingModel=sequelize.define('billings',{
     id:{
-        type:Sequelize.STRING,
+        type:Sequelize.INTEGER,
         autoIncrement:true,
         primaryKey:true,  
     },

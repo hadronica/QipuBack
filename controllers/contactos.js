@@ -17,13 +17,29 @@ const crearContacto=async(req,res)=>{
 
 const listarContactos=async(req,res)=>{
     try {
-        const user=await User.findOne({where:{uuid:req.params.id}})
+        const user=await User.findOne({where:{uuid:req.headers.token}})
         const pagadores=await Contact.findAll({where:{userId:user.id}})
         res.status(200).json({pagadores})
     } catch (error) {
         console.log(error)
         res.status(400).json(error)
     }
+}
+
+const listarContactosName=async(req,res)=>{
+try {
+    const user=await User.findOne({where:{uuid:req.headers.token}})
+    const pagadores=await Contact.findAll({where:{userId:user.id}})
+    const newPagadores=pagadores.map((item)=>{
+        return {
+            name:item.name_debtor,
+            value:item.name_debtor
+        }
+    })
+    res.status(200).json(newPagadores)
+} catch (error) {
+    res.status(400).json(error)
+}
 }
 
 const listarContactosAdmin=async(req,res)=>{
@@ -99,6 +115,7 @@ const eliminarContacto=async(req,res)=>{
 module.exports={
     crearContacto,
     listarContactos,
+    listarContactosName,
     listarContacto,
     listarContactosAdmin,
     listarContactosUserAdmin,
