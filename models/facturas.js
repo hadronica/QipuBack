@@ -3,7 +3,7 @@ const {sequelize}=require('../db')
 
 const BillingModel=sequelize.define('billings',{
     id:{
-        type:Sequelize.INTEGER,
+        type:Sequelize.STRING,
         autoIncrement:true,
         primaryKey:true,  
     },
@@ -11,16 +11,16 @@ const BillingModel=sequelize.define('billings',{
         type:Sequelize.STRING
     },
     amount:{
-        type:Sequelize.INTEGER
+        type:Sequelize.STRING
     },
     detraction:{
-        type:Sequelize.INTEGER
+        type:Sequelize.STRING
     },
     net_amount:{
-        type:Sequelize.INTEGER
+        type:Sequelize.STRING
     },
     account:{
-        type:Sequelize.INTEGER
+        type:Sequelize.STRING
     },
     file_link:{
         type:Sequelize.STRING
@@ -38,7 +38,7 @@ const BillingModel=sequelize.define('billings',{
         type:Sequelize.STRING
     },
     n_days:{
-        type:Sequelize.INTEGER
+        type:Sequelize.STRING
     },
     monthly_fee:{
         type:Sequelize.STRING
