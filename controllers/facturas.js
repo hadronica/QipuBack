@@ -15,6 +15,9 @@ const getInfo=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
         const bills=await Billing.findAll({where:{contactContactId:user.id}})
+        if(bills.length==0){
+            return res.status(200).json({msg:'billings not found'})
+        }
         return res.status(200).json(bills)
     } catch (error) {
         res.status(400).json(error)
@@ -28,6 +31,9 @@ const getInfoAdmin=async(req,res)=>{
             return res.status(401).json({msg:'permission denied'})
         }
         const bills=await Billing.findAll()
+        if(bills.length==0){
+            return res.status(200).json({msg:'billings not found'})
+        }
         return res.status(200).json(bills)
     } catch (error) {
         res.status(400).json(error)

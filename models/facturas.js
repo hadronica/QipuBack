@@ -22,9 +22,6 @@ const BillingModel=sequelize.define('billings',{
     account:{
         type:Sequelize.STRING
     },
-    file_link:{
-        type:Sequelize.STRING
-    },
     contactName:{
         type:Sequelize.STRING
     },
