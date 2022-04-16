@@ -32,8 +32,8 @@ try {
     const pagadores=await Contact.findAll({where:{userId:user.id}})
     const newPagadores=pagadores.map((item)=>{
         return {
-            name:item.name_debtor,
-            value:item.name_debtor
+            name:item.fullname,
+            value:item.fullname
         }
     })
     res.status(200).json(newPagadores)
