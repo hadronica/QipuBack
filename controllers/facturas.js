@@ -127,10 +127,26 @@ const editBill=async(req,res)=>{
     }
 }
 
+const operationBill=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const ids=Object.values(req.body)
+        await Billing.update({n_operation:ids[0]},{where:{billing_id:[ids[0],...ids]}})
+        return res.status(200).json({msg:'number of operation successfully updated'})
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json(error)
+    }
+}
+
 module.exports={
     getInfo,
     getInfoAdmin,
     getInfoUserAdmin,
     createBill,
-    editBill
+    editBill,
+    operationBill
 }
