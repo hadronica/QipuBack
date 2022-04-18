@@ -1,5 +1,6 @@
 const User=require('../models/usuarios')
 const Billing=require('../models/facturas')
+const Contact=require('../models/contactos')
 const fs=require('fs')
 require('dotenv').config()
 
@@ -35,6 +36,36 @@ const getInfoAdmin=async(req,res)=>{
             return res.status(200).json({msg:'billings not found'})
         }
         return res.status(200).json(bills)
+    } catch (error) {
+        res.status(400).json(error)
+    }
+}
+const getInfoUserAdmin=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const user= await User.findOne({where:{uuid:req.body.id}})
+        if(!user){
+            return res.status(401).json({msg:'client not found'})
+        }
+        const pagador=await Contact.findOne({where:{full_name:req.body.name}})
+        if(!pagador){
+            return res.status(401).json({msg:'debtors not found'})
+        }
+        const bills=await Billing.findAll({where:{contactContactId:user.id,contactName:pagador.full_name}})
+        if(bills.length==0){
+            return res.status(200).json({msg:'billings not found'})
+        }
+        const newBills=bills.map(item=>{
+            return {
+                billing_id:item.billing_id,
+                amount:item.amount,
+                date_emission:item.date_emission
+            }
+        })
+        return res.status(200).json(newBills)
     } catch (error) {
         res.status(400).json(error)
     }
@@ -99,6 +130,7 @@ const editBill=async(req,res)=>{
 module.exports={
     getInfo,
     getInfoAdmin,
+    getInfoUserAdmin,
     createBill,
     editBill
 }
