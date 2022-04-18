@@ -69,7 +69,7 @@ const createBill=async(req,res)=>{
             })
         })
         await Billing.create(req.body)
-        const template=templateFactura(user.name,req.body.billing_id)
+        const template=templateFactura(user.name,req.body.billing_id,user.email)
         await emailFactura(user.email,template)
         return res.status(200).json({msg:'created successfully'})
 } 

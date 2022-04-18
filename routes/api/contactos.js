@@ -1,10 +1,11 @@
 const { check } = require('express-validator')
-const { crearContacto, listarContacto, listarContactos, modificarContacto, eliminarContacto, listarContactosUserAdmin, listarContactosName } = require('../../controllers/contactos')
+const { crearContacto, listarContacto, listarContactos, modificarContacto, eliminarContacto, listarContactosUserAdmin, listarContactosName, listarContactosporUser } = require('../../controllers/contactos')
 const { noExisteID, noExisteIDContacto } = require('../../middlewares/dbValidator')
 const { validarCampo } = require('../../middlewares/validarCampo')
 
 const router=require('express').Router()
 
+router.post('/namesuser',listarContactosporUser)
 //CREAR CONTACTO
 router.post('/:id',[
     check('id','id invalido').not().isEmpty(),

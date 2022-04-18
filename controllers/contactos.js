@@ -26,6 +26,29 @@ const listarContactos=async(req,res)=>{
     }
 }
 
+const listarContactosporUser=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const user= await User.findOne({where:{uuid:req.body.id}})
+        if(!user){
+            return res.status(401).json({msg:'client not found'})
+        }
+        const contacts= await Contact.findAll({where:{userId:user.id}})
+        const pagadores=contacts.map(item=>{
+            return {
+                name:item.full_name
+            }
+        })
+        res.status(200).json(pagadores)
+    } catch (error) {
+        console.log(error)
+        res.status(400).json(error)
+    }
+}
+
 const listarContactosName=async(req,res)=>{
 try {
     const user=await User.findOne({where:{uuid:req.headers.token}})
@@ -119,6 +142,7 @@ module.exports={
     listarContacto,
     listarContactosAdmin,
     listarContactosUserAdmin,
+    listarContactosporUser,
     modificarContacto,
     eliminarContacto
 }

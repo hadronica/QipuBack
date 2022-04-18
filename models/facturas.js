@@ -60,6 +60,9 @@ const BillingModel=sequelize.define('billings',{
     },
     bank_name:{
         type:Sequelize.STRING
+    },
+    n_operation:{
+        type:Sequelize.STRING
     }
 })
 

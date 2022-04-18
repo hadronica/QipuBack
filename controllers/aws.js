@@ -17,8 +17,14 @@ const listFiles=async(req,res)=>{
     let params={Bucket:process.env.AWSBUCKET,Prefix:`${newName}`}
     s3.listObjectsV2(params,(err,data)=>{
         if(err) throw err
+
         const links=data.Contents.map((item)=>{
-          return "https://qipudb-test.s3.sa-east-1.amazonaws.com/"+item.Key
+          const arr=["ruc","dni","rtt","repre"]
+          const type=item.Key.replace("/"," ").split(" ")
+          return {
+            type:type[1] , 
+            file: "https://qipudb-test.s3.sa-east-1.amazonaws.com/"+item.Key
+          }
         })
         return res.status(200).json(links)
     })

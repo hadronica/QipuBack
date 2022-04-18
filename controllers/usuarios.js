@@ -90,6 +90,29 @@ const mostrarUsers=async(req,res)=>{
     }
 }
 
+const mostrarSoloUsersName=async(req,res)=>{
+    const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+    if(!isAdmin){
+        return res.status(401).json({msg:'permission denied'})
+    }
+    const user=await User.findAll({where:{role:2}})
+    const newUsers=user.map((item)=>{
+        return {
+            id:item.uuid,
+            name:item.name,
+        }
+    })
+    if(!user){
+        return res.status(401).json({msg:'users not found'})
+    }
+    if(user){
+        res.status(200).json(newUsers)
+    }
+    else{
+        return res.status(400).json({msg:'error'}) 
+    }
+}
+
 const crearUser=async(req,res)=>{
     try {
         req.body.password=bcrypt.hashSync(req.body.password)
@@ -167,6 +190,7 @@ const deleteUser=async(req,res)=>{
 module.exports={
     mostrarUsers,
     mostrarUser,
+    mostrarSoloUsersName,
     crearUser,
     loginUser,
     deleteUser,
