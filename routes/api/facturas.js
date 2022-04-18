@@ -8,7 +8,7 @@ router.post('/info-user',getInfoUserAdmin)
 
 router.post('/create-bill',createBill)
 
-router.put('/edit-bill/:billing_id',editBill)
+router.put('/edit-bill',editBill)
 
 
 

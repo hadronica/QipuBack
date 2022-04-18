@@ -116,7 +116,7 @@ const editBill=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const bill= await Billing.findOne({where:{billing_id:req.params.billing_id}})
+        const bill= await Billing.findOne({where:{billing_id:req.body.billing_id}})
         if(!bill){
             return res.status(400).json({msg:'bill not found'})
         }
