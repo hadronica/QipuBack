@@ -44,7 +44,7 @@ const mostrarUsers=async(req,res)=>{
        }
        const newUsers=user.map((item)=>{
            return {
-               id:item.id,
+               id:item.uuid,
                name:item.name,
                email:item.email,
                status:item.status,
