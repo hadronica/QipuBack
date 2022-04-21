@@ -25,27 +25,7 @@ const mostrarUser=async(req,res)=>{
         if(!user){
             return res.status(401).json({msg:'users not found'})
         }
-        // const newUser=user.map((item)=>{
-        //     return {
-        //         id:item.id,
-        //         name:item.name,
-        //         email:item.email,
-        //         status:item.status,
-        //         phone:item.phone,
-        //         ruc:item.ruc,
-        //         company_name:item.company_name,
-        //         social_sector:item.social_sector,
-        //         annual_income:item.annual_income,
-        //         name_r:item.name_r,
-        //         position:item.position,
-        //         typeDocument:item.typeDocument,
-        //         document:item.document,
-        //         email_r:item.email_r,
-        //         pep:item.pep,
-        //         validty:item.validty,
-        //         updatedAt:item.updatedAt,
-        //     }
-        // })
+
         return res.status(200).json(user)
     } catch (error) {
         console.log(error)
