@@ -20,74 +20,73 @@ const emailUser=async(req,res)=>{
     }
 }
 const mostrarUser=async(req,res)=>{
-    const user=await User.findOne({where:{uuid:req.body.token}})
-    const newUser=Object.keys(user).map((item)=>{
-        return {
-            id:item.id,
-            name:item.name,
-            email:item.email,
-            status:item.status,
-            phone:item.phone,
-            ruc:item.ruc,
-            company_name:item.company_name,
-            social_sector:item.social_sector,
-            annual_income:item.annual_income,
-            name_r:item.name_r,
-            position:item.position,
-            typeDocument:item.typeDocument,
-            document:item.document,
-            email_r:item.email_r,
-            pep:item.pep,
-            validty:item.validty,
-            updatedAt:item.updatedAt,
+    try {
+        const user=await User.findOne({where:{uuid:req.body.token}})
+        if(!user){
+            return res.status(401).json({msg:'users not found'})
         }
-    })
-    if(!user){
-        return res.status(401).json({msg:'users not found'})
-    }
-    if(user){
-        res.status(200).json(user)
-    }
-    else{
-        return res.status(400).json({msg:'error'}) 
+        // const newUser=user.map((item)=>{
+        //     return {
+        //         id:item.id,
+        //         name:item.name,
+        //         email:item.email,
+        //         status:item.status,
+        //         phone:item.phone,
+        //         ruc:item.ruc,
+        //         company_name:item.company_name,
+        //         social_sector:item.social_sector,
+        //         annual_income:item.annual_income,
+        //         name_r:item.name_r,
+        //         position:item.position,
+        //         typeDocument:item.typeDocument,
+        //         document:item.document,
+        //         email_r:item.email_r,
+        //         pep:item.pep,
+        //         validty:item.validty,
+        //         updatedAt:item.updatedAt,
+        //     }
+        // })
+        return res.status(200).json(user)
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json(error)
     }
 }
 const mostrarUsers=async(req,res)=>{
-    const isAdmin=await User.findOne({where:{uuid:req.body.token,role:[0,1]}})
-    if(!isAdmin){
-        return res.status(401).json({msg:'permission denied'})
-    }
-    const user=await User.findAll({where:{role:2}})
-    const newUsers=user.map((item)=>{
-        return {
-            id:item.id,
-            name:item.name,
-            email:item.email,
-            status:item.status,
-            phone:item.phone,
-            ruc:item.ruc,
-            company_name:item.company_name,
-            social_sector:item.social_sector,
-            annual_income:item.annual_income,
-            name_r:item.name_r,
-            position:item.position,
-            typeDocument:item.typeDocument,
-            document:item.document,
-            email_r:item.email_r,
-            pep:item.pep,
-            validty:item.validty,
-            updatedAt:item.updatedAt,
-        }
-    })
-    if(!user){
-        return res.status(401).json({msg:'users not found'})
-    }
-    if(user){
-        res.status(200).json(newUsers)
-    }
-    else{
-        return res.status(400).json({msg:'error'}) 
-    }
+    try {
+       const isAdmin=await User.findOne({where:{uuid:req.body.token,role:[0,1]}})
+       if(!isAdmin){
+           return res.status(401).json({msg:'permission denied'})
+       }
+       const user=await User.findAll({where:{role:2}})
+       if(!user){
+           return res.status(401).json({msg:'users not found'})
+       }
+       const newUsers=user.map((item)=>{
+           return {
+               id:item.id,
+               name:item.name,
+               email:item.email,
+               status:item.status,
+               phone:item.phone,
+               ruc:item.ruc,
+               company_name:item.company_name,
+               social_sector:item.social_sector,
+               annual_income:item.annual_income,
+               name_r:item.name_r,
+               position:item.position,
+               typeDocument:item.typeDocument,
+               document:item.document,
+               email_r:item.email_r,
+               pep:item.pep,
+               validity:item.validity,
+               updatedAt:item.updatedAt,
+           }
+       })
+       return res.status(200).json(newUsers)
+   } catch (error) {
+       return res.status(400).json(error)
+   }
 }
 
 const mostrarSoloUsersName=async(req,res)=>{
@@ -96,15 +95,15 @@ const mostrarSoloUsersName=async(req,res)=>{
         return res.status(401).json({msg:'permission denied'})
     }
     const user=await User.findAll({where:{role:2}})
+    if(!user){
+        return res.status(401).json({msg:'users not found'})
+    }
     const newUsers=user.map((item)=>{
         return {
             id:item.uuid,
             name:item.name,
         }
     })
-    if(!user){
-        return res.status(401).json({msg:'users not found'})
-    }
     if(user){
         res.status(200).json(newUsers)
     }
