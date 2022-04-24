@@ -33,13 +33,7 @@ router.get('/pagador/:id/:id_c',[
 ],listarContacto)
 
 //MODIFICAR CONTACTO
-router.post('/:id/:id_c',[
-    check('id','id invalido').not().isEmpty(),
-    check('id_c','id invalido').not().isEmpty(),
-    check('id').custom(noExisteID),
-    check('id_c').custom(noExisteIDContacto),
-    validarCampo
-],modificarContacto)
+router.put('/editcontact',modificarContacto)
 
 //ELIMINAR CONTACTO
 router.delete('/:id/:id_c',[

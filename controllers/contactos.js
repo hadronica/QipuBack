@@ -88,7 +88,7 @@ const listarContactosUserAdmin=async(req,res)=>{
         const contacts=await User.findAll({where:{role:2},include:[Contact]})
         const usercontact=contacts.map((item)=>{
             return {
-                id:item.id,
+                id:item.uuid,
                 name:item.name,
                 company_name:item.company_name,
                 contacts:item.contacts
@@ -113,9 +113,12 @@ const listarContacto=async(req,res)=>{
 
 const modificarContacto=async(req,res)=>{
     try {
-        const user=await User.findOne({where:{uuid:req.params.id}})
-        const contacto=await Contact.findOne({where:{userId:user.id,uuid:req.params.id_c}})
-        const newContacto =await Contact.update(req.body,{where:{contact_id:contacto.contact_id}})
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const contacto=await Contact.findOne({where:{uuid:req.body.id}})
+        await Contact.update(req.body,{where:{contact_id:contacto.contact_id}})
         res.status(200).json({msg:'updated successfully'})
     } catch (error) {
         console.log(error)
