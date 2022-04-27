@@ -9,7 +9,7 @@ router.post('/listcontact-user',listarContactosporUser)
 //CREAR CONTACTO
 router.post('/create',crearContacto)
 //LISTAR CONTACTOS
-router.get('/liscontacts-admin',listarContactosUserAdmin)
+router.get('/listcontacts-admin',listarContactosUserAdmin)
 
 router.get('/list-id',listarContacto)
 
