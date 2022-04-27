@@ -1,15 +1,14 @@
 const {check}=require('express-validator')
-const { crearUser, loginUser, forgotPassword, resetPassword, mostrarUsers,mostrarUser, emailUser, mostrarSoloUsersName, editUser } = require('../../controllers/usuarios')
+const { crearUser, loginUser, forgotPassword, resetPassword, mostrarUsers,mostrarUser, emailUser,editUser } = require('../../controllers/usuarios')
 const { validarCampo } = require('../../middlewares/validarCampo')
 const { existeRuc, noExisteRuc, noExisteEmail, existeEmail } = require('../../middlewares/dbValidator')
 const router=require('express').Router()
 
 
 
-router.put('/edituser',editUser)
+router.put('/edit',editUser)
 //MOSTRAR USERS ADMIN--
-router.post('/getinfo',mostrarUsers)
-router.post('/getnames',mostrarSoloUsersName)
+router.post('/listusers',mostrarUsers)
 //MOSTRAR USER LOGIN--
 router.post('/getuser',mostrarUser)
 
@@ -52,10 +51,6 @@ router.post('/emailsender',[
     check('email').custom(noExisteEmail)
 ],emailUser)
 
-// router.delete('/',[
-//     check('ruc').custom(existeRuc),
-//     check('email','El email no es valido').isEmail(),
-//     validarCampo
-// ],deleteUser)
+
 
 module.exports=router

@@ -3,6 +3,7 @@ const Billing=require('../models/facturas')
 const Contact=require('../models/contactos')
 const fs=require('fs')
 require('dotenv').config()
+const { nanoid } = require('nanoid')
 
 const aws=require('aws-sdk')
 const { emailFactura, templateFactura } = require('../middlewares/emailValidator')
@@ -75,6 +76,7 @@ const createBill=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
         req.body.contactContactId=user.id
+        req.body.uuid=nanoid(10)
         const pdfFile=req.files.pdf
         const tempPdfPath=pdfFile.tempFilePath
         fs.readFile(tempPdfPath, function(err, data) {

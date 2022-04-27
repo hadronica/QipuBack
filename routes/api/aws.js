@@ -6,11 +6,6 @@ const router=require('express').Router()
 
 router.post('/listfiles',listFiles)
 
-router.get('/download/:type',[
-    check('type').isIn(['ruc','dni','rtt','repre']),
-    validarCampo
-],downloadFile)
-
 router.post('/upload/:type',[
     check('type').isIn(['ruc','dni','rtt','repre']),
     validarCampo

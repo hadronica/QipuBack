@@ -4,14 +4,14 @@ const { nanoid } = require('nanoid')
 
 const crearContacto=async(req,res)=>{
     try {
-        const user=await User.findOne({where:{uuid:req.params.id}})
+        const user=await User.findOne({where:{uuid:req.headers.token}})
         req.body.userId=user.id
         req.body.uuid=nanoid(10)
         const contact= await Contact.create(req.body)
-        res.status(200).json({status:contact.status})
+        return res.status(200).json({status:contact.status})
     } catch (error) {
         console.log(error)
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 
@@ -19,10 +19,10 @@ const listarContactos=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
         const pagadores=await Contact.findAll({where:{userId:user.id}})
-        res.status(200).json({pagadores})
+        return res.status(200).json({pagadores})
     } catch (error) {
         console.log(error)
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 
@@ -42,10 +42,10 @@ const listarContactosporUser=async(req,res)=>{
                 name:item.full_name
             }
         })
-        res.status(200).json(pagadores)
+        return res.status(200).json(pagadores)
     } catch (error) {
         console.log(error)
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 
@@ -59,9 +59,9 @@ try {
             value:item.full_name
         }
     })
-    res.status(200).json(newPagadores)
+    return res.status(200).json(newPagadores)
 } catch (error) {
-    res.status(400).json(error)
+    return res.status(400).json(error)
 }
 }
 
@@ -76,7 +76,7 @@ const listarContactosAdmin=async(req,res)=>{
         
         return res.status(200).json({users,contacts})
     } catch (error) {
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 const listarContactosUserAdmin=async(req,res)=>{
@@ -96,18 +96,18 @@ const listarContactosUserAdmin=async(req,res)=>{
         })
         return res.status(200).json(usercontact)
     } catch (error) {
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 
 const listarContacto=async(req,res)=>{
     try {
-        const user=await User.findOne({where:{uuid:req.params.id}})
-        const pagador=await Contact.findOne({where:{userId:user.id,uuid:req.params.id_c}})
-        res.status(200).json({pagador})
+        const user=await User.findOne({where:{uuid:req.headers.token}})
+        const pagador=await Contact.findOne({where:{userId:user.id,uuid:req.body.id}})
+        return res.status(200).json({pagador})
     } catch (error) {
         console.log(error)
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 
@@ -119,22 +119,22 @@ const modificarContacto=async(req,res)=>{
         }
         const contacto=await Contact.findOne({where:{uuid:req.body.id}})
         await Contact.update(req.body,{where:{contact_id:contacto.contact_id}})
-        res.status(200).json({msg:'updated successfully'})
+        return res.status(200).json({msg:'updated successfully'})
     } catch (error) {
         console.log(error)
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 
 const eliminarContacto=async(req,res)=>{
     try {
-        const user=await User.findOne({where:{uuid:req.params.id}})
-        const contacto=await Contact.findOne({where:{userId:user.id,uuid:req.params.id_c}})
+        const user=await User.findOne({where:{uuid:req.headers.token}})
+        const contacto=await Contact.findOne({where:{userId:user.id,uuid:req.body.id}})
         contacto.destroy()
-        res.status(200).json({msg:'deleted successfully'})
+        return res.status(200).json({msg:'deleted successfully'})
     } catch (error) {
         console.log(error)
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 

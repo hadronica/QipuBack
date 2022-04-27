@@ -63,6 +63,9 @@ const BillingModel=sequelize.define('billings',{
     },
     n_operation:{
         type:Sequelize.STRING
+    },
+    uuid:{
+        type:Sequelize.STRING
     }
 })
 

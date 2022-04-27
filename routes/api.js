@@ -5,11 +5,11 @@ const apiContactRouter=require('./api/contactos')
 const apiAWSRouter=require('./api/aws')
 const apiBillingRouter=require('./api/facturas')
 
-router.use('/usuarios',apiUserRouter)
+router.use('/user',apiUserRouter)
 router.use('/auth',apiAuthRouter)
-router.use('/contactos',apiContactRouter)
+router.use('/contact',apiContactRouter)
 router.use('/aws',apiAWSRouter)
-router.use('/facturas',apiBillingRouter)
+router.use('/billing',apiBillingRouter)
 
 
 module.exports=router

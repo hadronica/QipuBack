@@ -2,15 +2,16 @@ const { getInfo, getInfoAdmin, createBill, editBill, getInfoUserAdmin, operation
 
 const router=require('express').Router()
 
-router.get('/info-billing',getInfo)
-router.get('/info-billing-admin',getInfoAdmin)
+router.get('/list-admin',getInfoAdmin)
+router.get('/list',getInfo)
+
 router.post('/info-user',getInfoUserAdmin)
 
-router.post('/create-bill',createBill)
+router.post('/create',createBill)
 
-router.put('/edit-bill',editBill)
+router.put('/edit',editBill)
 
-router.put('/operation-bill',operationBill)
+router.put('/operation',operationBill)
 
 
 

@@ -12,16 +12,16 @@ const emailUser=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        // const user=User.findOne({where:{uuid:req.body.id}})
         await emailDefault(req.body.email,req.body.html,req.body.subject)
-        res.status(200).json({msg:'email sent successfully'})
+        return res.status(200).json({msg:'email sent successfully'})
     } catch (error) {
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
+
 const mostrarUser=async(req,res)=>{
     try {
-        const user=await User.findOne({where:{uuid:req.body.token}})
+        const user=await User.findOne({where:{uuid:req.headers.token}})
         if(!user){
             return res.status(401).json({msg:'users not found'})
         }
@@ -32,9 +32,10 @@ const mostrarUser=async(req,res)=>{
         return res.status(400).json(error)
     }
 }
+
 const mostrarUsers=async(req,res)=>{
     try {
-       const isAdmin=await User.findOne({where:{uuid:req.body.token,role:[0,1]}})
+       const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
        if(!isAdmin){
            return res.status(401).json({msg:'permission denied'})
        }
@@ -69,29 +70,6 @@ const mostrarUsers=async(req,res)=>{
    }
 }
 
-const mostrarSoloUsersName=async(req,res)=>{
-    const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
-    if(!isAdmin){
-        return res.status(401).json({msg:'permission denied'})
-    }
-    const user=await User.findAll({where:{role:2}})
-    if(!user){
-        return res.status(401).json({msg:'users not found'})
-    }
-    const newUsers=user.map((item)=>{
-        return {
-            id:item.uuid,
-            name:item.name,
-        }
-    })
-    if(user){
-        res.status(200).json(newUsers)
-    }
-    else{
-        return res.status(400).json({msg:'error'}) 
-    }
-}
-
 const crearUser=async(req,res)=>{
     try {
         req.body.password=bcrypt.hashSync(req.body.password)
@@ -99,26 +77,26 @@ const crearUser=async(req,res)=>{
         const user= await User.create(req.body)
         const template= templateVerificar(user.name,user.email,user.ruc,user.company_name)
         await emailVerificar(req.body.email,template)
-        res.status(200).json({status:user.status,role:user.role,id:user.uuid})
+        return res.status(200).json({status:user.status,role:user.role,id:user.uuid})
     } catch (error) {
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 
 const loginUser=async(req,res)=>{
     const user=await User.findOne({where:{email:req.body.email}})
     if(!user.status){
-        return res.status(401).json({msg:'usuario inactivo'})
+        return res.status(401).json({msg:'inactive user'})
     }
     if(user){
         const igualar=bcrypt.compareSync(req.body.password,user.password)
         if (igualar) {
             res.status(200).json({status:user.status,role:user.role,id:user.uuid})
         } else {
-            return res.status(401).json({msg:'Error en contraseña'})
+            return res.status(401).json({msg:'Invalid password'})
         }
     }else{
-        return res.status(401).json({msg:'Error en email'})
+        return res.status(401).json({msg:'Invalid email'})
     }
 }
 
@@ -130,7 +108,7 @@ const forgotPassword=async(req,res)=>{
         await user.update({resetpass:token},{where:{ruc:ruc}})
         const template= templateResetear(user.name,token,user.email)
         await emailResetear(email,template)
-        res.json({msg:'ok'})
+        return res.json({msg:'token sent'})
         
     } catch (error) {
         return res.status(400).json(error)
@@ -141,30 +119,21 @@ const resetPassword=async(req,res)=>{
     const {password,password2,token}=req.body
     const user=await User.findOne({where:{resetpass:token}})
     if(!user){
-        return res.status(400).json({msg:'token invalido'})
+        return res.status(400).json({msg:'invalid token'})
     }
     try {
         if(password===password2){
             const newPassword=bcrypt.hashSync(password)
             await user.update({password:newPassword},{where:{resetpass:token}})
-            res.status(200).json({msg:'clave cambiada'})
+            res.status(200).json({msg:'password updated successfully'})
         }else{
-            return res.status(401).json({msg:'las claves son distintas'})
+            return res.status(401).json({msg:'invalid password'})
         }
     } catch (error) {
-        res.status(400).json({msg:'token invalido'})
+        return res.status(400).json({msg:'invalid token'})
     }
 }
 
-const deleteUser=async(req,res)=>{
-    const user=await User.findByPk(req.body.ruc)
-    try {
-        await User.update({status:false},{where:{ruc:req.params.ruc,email:req.params.email}})
-        res.json(user)
-    } catch (error) {
-        res.json(error)
-    }
-}
 
 const editUser=async(req,res)=>{
     try {
@@ -186,10 +155,8 @@ const editUser=async(req,res)=>{
 module.exports={
     mostrarUsers,
     mostrarUser,
-    mostrarSoloUsersName,
     crearUser,
     loginUser,
-    deleteUser,
     forgotPassword,
     resetPassword,
     emailUser,

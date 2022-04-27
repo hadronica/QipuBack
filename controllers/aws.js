@@ -57,25 +57,9 @@ const uploadFile=async(req,res)=>{
     })
 }
 
-const downloadFile=async(req,res)=>{
-    const user=await User.findOne({where:{uuid:req.headers.token}})
-    if(!user){return res.status(401).json({msg:'User not found'})}
-
-    let params={Bucket:process.env.AWSBUCKET,Key:`${user.name}/${req.params.type}`}
-    s3.getObject(params,(err,data)=>{
-        if(err) throw err
-        console.log(data)
-        fs.writeFile(req.params.type,data.Body,'binary',(err)=>{
-            if(err) throw err
-            else return res.status(200).json({msg:'downloaded succesfully',data})
-        })
-    })
-
-}
 
 
 module.exports={
     listFiles,
-    uploadFile,
-    downloadFile
+    uploadFile
 }
