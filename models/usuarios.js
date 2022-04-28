@@ -1,6 +1,7 @@
 const Sequelize=require('sequelize')
 const {sequelize}=require('../db')
 const ContactModel = require('./contactos')
+const BillingModel=require('./facturas')
 
 const UserModel=sequelize.define('users',{
         id:{
@@ -82,6 +83,7 @@ const UserModel=sequelize.define('users',{
     }
 })
 UserModel.hasMany(ContactModel)
+UserModel.hasMany(BillingModel)
 
 
 module.exports=UserModel

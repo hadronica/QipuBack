@@ -34,6 +34,6 @@ const ContactModel=sequelize.define('contacts',{
             type:Sequelize.STRING
         }
     })
-ContactModel.hasMany(BillingModel)
+
 
 module.exports=ContactModel

@@ -91,7 +91,20 @@ const listarContactosUserAdmin=async(req,res)=>{
                 id:item.uuid,
                 name:item.name,
                 company_name:item.company_name,
-                contacts:item.contacts
+                contacts:item.contacts.map(i=>{
+                    return {
+                        id:i.uuid,
+                        ruc:i.ruc,
+                        full_name:i.full_name,
+                        email:i.email,
+                        email_extra:i.email_extra,
+                        phone:i.phone,
+                        name_debt:i.name_debt,
+                        status:i.status,
+                        createdAt:i.createdAt,
+                        updatedAt:i.updatedAt,
+                    }
+                })
             }
         })
         return res.status(200).json(usercontact)

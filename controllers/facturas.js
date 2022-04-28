@@ -16,7 +16,7 @@ const s3=new aws.S3({
 const getInfo=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
-        const bills=await Billing.findAll({where:{contactContactId:user.id}})
+        const bills=await Billing.findAll({where:{userId:user.id}})
         if(bills.length==0){
             return res.status(200).json({msg:'billings not found'})
         }
@@ -58,41 +58,49 @@ const getInfoAdmin=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const bills=await Billing.findAll()
-        if(bills.length==0){
+        const bills=await User.findAll({where:{role:2},include:[Billing]})
+        if(bills.length===0){
             return res.status(200).json({msg:'billings not found'})
         }
         const newBills=bills.map(item=>{
             return {
                 id:item.uuid,
-                billing_id:item.billing_id,
-                amount:item.amount,
-                detraction:item.detraction,
-                net_amount:item.net_amount,
-                account:item.account,
-                contactName:item.contactName,
-                date_emission:item.date_emission,
-                status:item.status,
-                date_payment:item.date_payment,
-                n_days:item.n_days,
-                monthly_fee:item.monthly_fee,
-                commission:item.commission,
-                partnet:item.partnet,
-                first_payment:item.first_payment,
-                second_payment:item.second_payment,
-                commercial:item.commercial,
-                n_commercial_qipu:item.n_commercial_qipu,
-                bank_name:item.bank_name,
-                n_operation:item.n_operation,
-                createdAt:item.createdAt,
-                updatedAt:item.updatedAt,
+                name:item.name,
+                company_name:item.company_name,
+                billings:item.billings.map(i=>{
+                    return {
+                        id:i.uuid,
+                        billing_id:i.billing_id,
+                        amount:i.amount,
+                        detraction:i.detraction,
+                        net_amount:i.net_amount,
+                        account:i.account,
+                        contactName:i.contactName,
+                        date_emission:i.date_emission,
+                        status:i.status,
+                        date_payment:i.date_payment,
+                        n_days:i.n_days,
+                        monthly_fee:i.monthly_fee,
+                        commission:i.commission,
+                        partnet:i.partnet,
+                        first_payment:i.first_payment,
+                        second_payment:i.second_payment,
+                        commercial:i.commercial,
+                        n_commercial_qipu:i.n_commercial_qipu,
+                        bank_name:i.bank_name,
+                        n_operation:i.n_operation,
+                        createdAt:i.createdAt,
+                        updatedAt:i.updatedAt,
+                    }
+                })
             }
         })
         return res.status(200).json(newBills)
     } catch (error) {
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
+
 const getInfoUserAdmin=async(req,res)=>{
     try {
         const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
@@ -107,7 +115,7 @@ const getInfoUserAdmin=async(req,res)=>{
         if(!pagador){
             return res.status(401).json({msg:'debtors not found'})
         }
-        const bills=await Billing.findAll({where:{contactContactId:user.id,contactName:pagador.full_name}})
+        const bills=await Billing.findAll({where:{userId:user.id,contactName:pagador.full_name}})
         if(bills.length==0){
             return res.status(200).json({msg:'billings not found'})
         }
@@ -128,7 +136,7 @@ const getInfoUserAdmin=async(req,res)=>{
 const createBill=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
-        req.body.contactContactId=user.id
+        req.body.userId=user.id
         req.body.uuid=nanoid(10)
         const pdfFile=req.files.pdf
         const tempPdfPath=pdfFile.tempFilePath
@@ -171,7 +179,7 @@ const editBill=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const bill= await Billing.findOne({where:{billing_id:req.body.billing_id}})
+        const bill= await Billing.findOne({where:{uuid:req.body.id}})
         if(!bill){
             return res.status(400).json({msg:'bill not found'})
         }
@@ -189,7 +197,7 @@ const operationBill=async(req,res)=>{
             return res.status(401).json({msg:'permission denied'})
         }
         const idsArray=req.body.ids.slice(1,-1).split(',')
-        await Billing.update({n_operation:req.body.n_operation},{where:{billing_id:idsArray}})
+        await Billing.update({n_operation:req.body.n_operation},{where:{uuid:idsArray}})
         return res.status(200).json({msg:'number of operation successfully updated'})
     } catch (error) {
         console.log(error)
