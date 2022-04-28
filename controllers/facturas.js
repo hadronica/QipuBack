@@ -20,7 +20,33 @@ const getInfo=async(req,res)=>{
         if(bills.length==0){
             return res.status(200).json({msg:'billings not found'})
         }
-        return res.status(200).json(bills)
+        const newBills=bills.map(item=>{
+            return {
+                id:item.uuid,
+                billing_id:item.billing_id,
+                amount:item.amount,
+                detraction:item.detraction,
+                net_amount:item.net_amount,
+                account:item.account,
+                contactName:item.contactName,
+                date_emission:item.date_emission,
+                status:item.status,
+                date_payment:item.date_payment,
+                n_days:item.n_days,
+                monthly_fee:item.monthly_fee,
+                commission:item.commission,
+                partnet:item.partnet,
+                first_payment:item.first_payment,
+                second_payment:item.second_payment,
+                commercial:item.commercial,
+                n_commercial_qipu:item.n_commercial_qipu,
+                bank_name:item.bank_name,
+                n_operation:item.n_operation,
+                createdAt:item.createdAt,
+                updatedAt:item.updatedAt,
+            }
+        })
+        return res.status(200).json(newBills)
     } catch (error) {
         res.status(400).json(error)
     }
@@ -36,7 +62,33 @@ const getInfoAdmin=async(req,res)=>{
         if(bills.length==0){
             return res.status(200).json({msg:'billings not found'})
         }
-        return res.status(200).json(bills)
+        const newBills=bills.map(item=>{
+            return {
+                id:item.uuid,
+                billing_id:item.billing_id,
+                amount:item.amount,
+                detraction:item.detraction,
+                net_amount:item.net_amount,
+                account:item.account,
+                contactName:item.contactName,
+                date_emission:item.date_emission,
+                status:item.status,
+                date_payment:item.date_payment,
+                n_days:item.n_days,
+                monthly_fee:item.monthly_fee,
+                commission:item.commission,
+                partnet:item.partnet,
+                first_payment:item.first_payment,
+                second_payment:item.second_payment,
+                commercial:item.commercial,
+                n_commercial_qipu:item.n_commercial_qipu,
+                bank_name:item.bank_name,
+                n_operation:item.n_operation,
+                createdAt:item.createdAt,
+                updatedAt:item.updatedAt,
+            }
+        })
+        return res.status(200).json(newBills)
     } catch (error) {
         res.status(400).json(error)
     }
@@ -61,6 +113,7 @@ const getInfoUserAdmin=async(req,res)=>{
         }
         const newBills=bills.map(item=>{
             return {
+                id:item.uuid,
                 billing_id:item.billing_id,
                 amount:item.amount,
                 date_emission:item.date_emission
@@ -135,8 +188,8 @@ const operationBill=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const ids=Object.values(req.body)
-        await Billing.update({n_operation:ids[0]},{where:{billing_id:[ids[0],...ids]}})
+        const idsArray=req.body.ids.slice(1,-1).split(',')
+        await Billing.update({n_operation:req.body.n_operation},{where:{billing_id:idsArray}})
         return res.status(200).json({msg:'number of operation successfully updated'})
     } catch (error) {
         console.log(error)

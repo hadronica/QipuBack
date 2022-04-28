@@ -69,6 +69,27 @@ const mostrarUsers=async(req,res)=>{
        return res.status(400).json(error)
    }
 }
+const mostrarUsersNameToken=async(req,res)=>{
+    try {
+       const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+       if(!isAdmin){
+           return res.status(401).json({msg:'permission denied'})
+       }
+       const user=await User.findAll({where:{role:2}})
+       if(!user){
+           return res.status(401).json({msg:'users not found'})
+       }
+       const newUsers=user.map((item)=>{
+           return {
+               id:item.uuid,
+               name:item.name,
+           }
+       })
+       return res.status(200).json(newUsers)
+   } catch (error) {
+       return res.status(400).json(error)
+   }
+}
 
 const crearUser=async(req,res)=>{
     try {
@@ -160,5 +181,6 @@ module.exports={
     forgotPassword,
     resetPassword,
     emailUser,
-    editUser
+    editUser,
+    mostrarUsersNameToken
 }
