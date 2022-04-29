@@ -19,7 +19,7 @@ const listFiles=async(req,res)=>{
         if(err) throw err
 
         const links=data.Contents.map((item)=>{
-          const arr=["ruc","dni","rtt","repre"]
+          
           const type=item.Key.replace("/"," ").split(" ")
           return {
             type:type[1] , 

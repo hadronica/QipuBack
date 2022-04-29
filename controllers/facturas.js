@@ -50,7 +50,7 @@ const getInfo=async(req,res)=>{
         })
         return res.status(200).json(newBills)
     } catch (error) {
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 
@@ -93,7 +93,9 @@ const getInfoAdmin=async(req,res)=>{
                         n_operation:i.n_operation,
                         createdAt:i.createdAt,
                         updatedAt:i.updatedAt,
-                        date_payout:item.date_payout
+                        date_payout:item.date_payout,
+                        pdfLink:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.pdfLink,
+                        xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink
                     }
                 })
             }
@@ -132,7 +134,7 @@ const getInfoUserAdmin=async(req,res)=>{
         })
         return res.status(200).json(newBills)
     } catch (error) {
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 
@@ -156,6 +158,7 @@ const createBill=async(req,res)=>{
                 })
             })
         })
+        req.body.pdfLink=`${newName}/pagadores/${newContact}/PDF${req.body.billing_id}`
         const xmlFile=req.files.xml
         const tempXmlPath=xmlFile.tempFilePath
         fs.readFile(tempXmlPath, function(err, data) {
@@ -168,6 +171,7 @@ const createBill=async(req,res)=>{
                 })
             })
         })
+        req.body.xmlLink=`${newName}/pagadores/${newContact}/XML${req.body.billing_id}`
         await Billing.create(req.body)
         const template=templateFactura(user.name,req.body.billing_id,user.email)
         await emailFactura(user.email,template)
@@ -175,7 +179,7 @@ const createBill=async(req,res)=>{
 } 
     catch (error) {
         console.log(error)
-        res.status(400).json(error)
+        return res.status(400).json(error)
     }
 }
 
@@ -208,7 +212,6 @@ const operationBill=async(req,res)=>{
         await Billing.update({n_operation:req.body.n_operation,operationId:operation.id},{where:{uuid:idsArray}})
         return res.status(200).json({msg:'number of operation successfully updated'})
     } catch (error) {
-        console.log(error)
         return res.status(400).json(error)
     }
 }
@@ -247,14 +250,15 @@ const getOperation=async(req,res)=>{
                         bank_name:i.bank_name,
                         createdAt:i.createdAt,
                         updatedAt:i.updatedAt,
-                        date_payout:item.date_payout
+                        date_payout:item.date_payout,
+                        pdfLink:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.pdfLink,
+                        xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink
                     }
                 })
             }
         })
         return res.status(200).json(newOperation)
     } catch (error) {
-        console.log(error)
         return res.status(400).json(error)
     }
 }
@@ -266,5 +270,5 @@ module.exports={
     createBill,
     editBill,
     operationBill,
-    getOperation
+    getOperation,
 }

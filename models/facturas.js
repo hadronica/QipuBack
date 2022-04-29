@@ -69,6 +69,12 @@ const BillingModel=sequelize.define('billings',{
     },
     date_payout:{
         type:Sequelize.STRING
+    },
+    pdfLink:{
+        type:Sequelize.STRING
+    },
+    xmlLink:{
+        type:Sequelize.STRING
     }
 })
 
