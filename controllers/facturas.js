@@ -45,6 +45,7 @@ const getInfo=async(req,res)=>{
                 n_operation:item.n_operation,
                 createdAt:item.createdAt,
                 updatedAt:item.updatedAt,
+                date_payout:item.date_payout
             }
         })
         return res.status(200).json(newBills)
@@ -92,6 +93,7 @@ const getInfoAdmin=async(req,res)=>{
                         n_operation:i.n_operation,
                         createdAt:i.createdAt,
                         updatedAt:i.updatedAt,
+                        date_payout:item.date_payout
                     }
                 })
             }
@@ -242,6 +244,7 @@ const getOperation=async(req,res)=>{
                         bank_name:i.bank_name,
                         createdAt:i.createdAt,
                         updatedAt:i.updatedAt,
+                        date_payout:item.date_payout
                     }
                 })
             }
