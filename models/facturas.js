@@ -66,6 +66,9 @@ const BillingModel=sequelize.define('billings',{
     },
     uuid:{
         type:Sequelize.STRING
+    },
+    date_payout:{
+        type:Sequelize.STRING
     }
 })
 
