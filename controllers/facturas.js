@@ -139,12 +139,14 @@ const getInfoUserAdmin=async(req,res)=>{
 const createBill=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
+        const newName=user.name.replaceAll(" ","")
         req.body.userId=user.id
         req.body.uuid=nanoid(10)
+        const newContact=req.body.contactName.replaceAll(" ","")
         const pdfFile=req.files.pdf
         const tempPdfPath=pdfFile.tempFilePath
         fs.readFile(tempPdfPath, function(err, data) {
-            let params={Bucket:process.env.AWSBUCKET,Key:`${user.name}/pagadores/${req.body.contactName}/PDF${req.body.billing_id}`,Body: data,ACL: 'public-read',ContentType:pdfFile.mimetype}
+            let params={Bucket:process.env.AWSBUCKET,Key:`${newName}/pagadores/${newContact}/PDF${req.body.billing_id}`,Body: data,ACL: 'public-read',ContentType:pdfFile.mimetype}
             s3.upload(params, function(err, data) {
                 fs.unlink(tempPdfPath, function(err) {
                     if (err) {
@@ -200,7 +202,7 @@ const operationBill=async(req,res)=>{
             return res.status(401).json({msg:'permission denied'})
         }
         const idsArray=req.body.ids.slice(1,-1).split(',')
-        await Operation.create({n_operation:req.body.n_operation})
+        await Operation.create({n_operation:req.body.n_operation,name:req.body.name})
         const operation=await Operation.findOne({where:{n_operation:req.body.n_operation}})
         await Billing.update({n_operation:req.body.n_operation,operationId:operation.id},{where:{uuid:idsArray}})
         return res.status(200).json({msg:'number of operation successfully updated'})
