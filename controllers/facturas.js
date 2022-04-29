@@ -1,6 +1,7 @@
 const User=require('../models/usuarios')
 const Billing=require('../models/facturas')
 const Contact=require('../models/contactos')
+const Operation=require('../models/operaciones')
 const fs=require('fs')
 require('dotenv').config()
 const { nanoid } = require('nanoid')
@@ -197,8 +198,55 @@ const operationBill=async(req,res)=>{
             return res.status(401).json({msg:'permission denied'})
         }
         const idsArray=req.body.ids.slice(1,-1).split(',')
-        await Billing.update({n_operation:req.body.n_operation},{where:{uuid:idsArray}})
+        await Operation.create({n_operation:req.body.n_operation})
+        const operation=await Operation.findOne({where:{n_operation:req.body.n_operation}})
+        await Billing.update({n_operation:req.body.n_operation,operationId:operation.id},{where:{uuid:idsArray}})
         return res.status(200).json({msg:'number of operation successfully updated'})
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json(error)
+    }
+}
+
+const getOperation=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const operation=await Operation.findAll({include:[Billing]})
+        const newOperation=operation.map(item=>{
+            return {
+                n_operation:item.n_operation,
+                name:item.name,
+                billings:item.billings.map(i=>{
+                    return {
+                        id:i.uuid,
+                        billing_id:i.billing_id,
+                        amount:i.amount,
+                        detraction:i.detraction,
+                        net_amount:i.net_amount,
+                        account:i.account,
+                        contactName:i.contactName,
+                        date_emission:i.date_emission,
+                        status:i.status,
+                        date_payment:i.date_payment,
+                        n_days:i.n_days,
+                        monthly_fee:i.monthly_fee,
+                        commission:i.commission,
+                        partnet:i.partnet,
+                        first_payment:i.first_payment,
+                        second_payment:i.second_payment,
+                        commercial:i.commercial,
+                        n_commercial_qipu:i.n_commercial_qipu,
+                        bank_name:i.bank_name,
+                        createdAt:i.createdAt,
+                        updatedAt:i.updatedAt,
+                    }
+                })
+            }
+        })
+        return res.status(200).json(newOperation)
     } catch (error) {
         console.log(error)
         return res.status(400).json(error)
@@ -211,5 +259,6 @@ module.exports={
     getInfoUserAdmin,
     createBill,
     editBill,
-    operationBill
+    operationBill,
+    getOperation
 }

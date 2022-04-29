@@ -1,9 +1,10 @@
-const { getInfo, getInfoAdmin, createBill, editBill, getInfoUserAdmin, operationBill } = require('../../controllers/facturas')
+const { getInfo, getInfoAdmin, createBill, editBill, getInfoUserAdmin, operationBill, getOperation } = require('../../controllers/facturas')
 
 const router=require('express').Router()
 
 router.get('/list-admin',getInfoAdmin)
 router.get('/list',getInfo)
+router.get('/list-operations',getOperation)
 
 router.post('/info-user',getInfoUserAdmin)
 
