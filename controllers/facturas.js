@@ -159,7 +159,7 @@ const createBill=async(req,res)=>{
         const xmlFile=req.files.xml
         const tempXmlPath=xmlFile.tempFilePath
         fs.readFile(tempXmlPath, function(err, data) {
-            let params={Bucket:process.env.AWSBUCKET,Key:`${user.name}/pagadores/${req.body.contactName}/XML${req.body.billing_id}`,Body: data,ACL: 'public-read',ContentType:xmlFile.mimetype}
+            let params={Bucket:process.env.AWSBUCKET,Key:`${newName}/pagadores/${newContact}/XML${req.body.billing_id}`,Body: data,ACL: 'public-read',ContentType:xmlFile.mimetype}
             s3.upload(params, function(err, data) {
                 fs.unlink(tempXmlPath, function(err) {
                     if (err) {
