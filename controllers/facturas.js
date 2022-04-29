@@ -142,7 +142,8 @@ const createBill=async(req,res)=>{
         const newName=user.name.replaceAll(" ","")
         req.body.userId=user.id
         req.body.uuid=nanoid(10)
-        const newContact=req.body.contactName.replaceAll(" ","")
+        const contact=req.body.contactName
+        const newContact=contact.replaceAll(" ","")
         const pdfFile=req.files.pdf
         const tempPdfPath=pdfFile.tempFilePath
         fs.readFile(tempPdfPath, function(err, data) {
