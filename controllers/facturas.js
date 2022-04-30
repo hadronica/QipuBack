@@ -132,11 +132,12 @@ const getInfoUserAdmin=async(req,res)=>{
                 billing_id:item.billing_id,
                 amount:item.amount,
                 date_emission:item.date_emission,
-                date_expiration:i.date_expiration
+                date_expiration:item.date_expiration
             }
         })
         return res.status(200).json(newBills)
     } catch (error) {
+        console.log(error)
         return res.status(400).json(error)
     }
 }
