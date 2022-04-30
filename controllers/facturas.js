@@ -229,6 +229,7 @@ const getOperation=async(req,res)=>{
             return {
                 n_operation:item.n_operation,
                 name:item.name,
+                contact:item.contact,
                 billings:item.billings.map(i=>{
                     return {
                         id:i.uuid,
