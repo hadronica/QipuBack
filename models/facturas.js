@@ -75,6 +75,9 @@ const BillingModel=sequelize.define('billings',{
     },
     xmlLink:{
         type:Sequelize.STRING
+    },
+    date_expiration:{
+        type:Sequelize.STRING
     }
 })
 
