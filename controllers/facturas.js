@@ -131,7 +131,8 @@ const getInfoUserAdmin=async(req,res)=>{
                 id:item.uuid,
                 billing_id:item.billing_id,
                 amount:item.amount,
-                date_emission:item.date_emission
+                date_emission:item.date_emission,
+                date_expiration:i.date_expiration
             }
         })
         return res.status(200).json(newBills)
@@ -267,6 +268,22 @@ const getOperation=async(req,res)=>{
     }
 }
 
+const editOperation=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const idsArray=req.body.ids.slice(1,-1).split(',')
+        const billings= await Operation.findOne({where:{n_operation:req.body.n_operation,name:req.body.name,contact:req.body.contact}})
+        await Billing.update({operationId:null,n_operation:null},{where:{operationId:billings.id}})
+        await Billing.update({n_operation:req.body.n_operation,operationId:billings.id},{where:{uuid:idsArray}})
+        return res.status(200).json({msg:'updated successfully'})
+    } catch (error) {
+        return res.status(400).json(error)
+    }
+}
+
 module.exports={
     getInfo,
     getInfoAdmin,
@@ -275,4 +292,5 @@ module.exports={
     editBill,
     operationBill,
     getOperation,
+    editOperation
 }
