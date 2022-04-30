@@ -13,6 +13,9 @@ const OperationModel=sequelize.define('operations',{
     },
     name:{
         type:Sequelize.STRING,
+    },
+    contact:{
+        type:Sequelize.STRING,
     }
 })
 OperationModel.hasMany(BillingModel)

@@ -209,7 +209,7 @@ const operationBill=async(req,res)=>{
             return res.status(401).json({msg:'permission denied'})
         }
         const idsArray=req.body.ids.slice(1,-1).split(',')
-        await Operation.create({n_operation:req.body.n_operation,name:req.body.name})
+        await Operation.create({n_operation:req.body.n_operation,name:req.body.name,contact:req.body.contact})
         const operation=await Operation.findOne({where:{n_operation:req.body.n_operation}})
         await Billing.update({n_operation:req.body.n_operation,operationId:operation.id},{where:{uuid:idsArray}})
         return res.status(200).json({msg:'number of operation successfully updated'})
