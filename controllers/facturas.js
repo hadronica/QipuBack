@@ -45,7 +45,8 @@ const getInfo=async(req,res)=>{
                 n_operation:item.n_operation,
                 createdAt:item.createdAt,
                 updatedAt:item.updatedAt,
-                date_payout:item.date_payout
+                date_payout:item.date_payout,
+                date_expiration:i.date_expiration
             }
         })
         return res.status(200).json(newBills)
@@ -95,7 +96,8 @@ const getInfoAdmin=async(req,res)=>{
                         updatedAt:i.updatedAt,
                         date_payout:item.date_payout,
                         pdfLink:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.pdfLink,
-                        xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink
+                        xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink,
+                        date_expiration:i.date_expiration
                     }
                 })
             }
@@ -252,7 +254,8 @@ const getOperation=async(req,res)=>{
                         updatedAt:i.updatedAt,
                         date_payout:item.date_payout,
                         pdfLink:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.pdfLink,
-                        xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink
+                        xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink,
+                        date_expiration:i.date_expiration
                     }
                 })
             }
