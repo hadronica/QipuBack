@@ -29,7 +29,8 @@ const BillingModel=sequelize.define('billings',{
         type:Sequelize.STRING
     },
     status:{
-        type:Sequelize.STRING
+        type:Sequelize.STRING,
+        defaultValue:null
     },
     date_payment:{
         type:Sequelize.STRING

@@ -213,7 +213,7 @@ const operationBill=async(req,res)=>{
         const idsArray=req.body.ids.slice(1,-1).split(',')
         await Operation.create({n_operation:req.body.n_operation,name:req.body.name,contact:req.body.contact})
         const operation=await Operation.findOne({where:{n_operation:req.body.n_operation}})
-        await Billing.update({n_operation:req.body.n_operation,operationId:operation.id},{where:{uuid:idsArray}})
+        await Billing.update({n_operation:req.body.n_operation,operationId:operation.id,status:operation.status},{where:{uuid:idsArray}})
         return res.status(200).json({msg:'number of operation successfully updated'})
     } catch (error) {
         return res.status(400).json(error)
@@ -281,6 +281,7 @@ const editOperation=async(req,res)=>{
         await Billing.update({n_operation:req.body.n_operation,operationId:billings.id},{where:{uuid:idsArray}})
         return res.status(200).json({msg:'updated successfully'})
     } catch (error) {
+        console.log(error)
         return res.status(400).json(error)
     }
 }

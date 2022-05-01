@@ -16,6 +16,10 @@ const OperationModel=sequelize.define('operations',{
     },
     contact:{
         type:Sequelize.STRING,
+    },
+    status:{
+        type:Sequelize.STRING,
+        defaultValue:"En Proceso"
     }
 })
 OperationModel.hasMany(BillingModel)
