@@ -46,11 +46,12 @@ const getInfo=async(req,res)=>{
                 createdAt:item.createdAt,
                 updatedAt:item.updatedAt,
                 date_payout:item.date_payout,
-                date_expiration:i.date_expiration
+                date_expiration:item.date_expiration
             }
         })
         return res.status(200).json(newBills)
     } catch (error) {
+        console.log(error)
         return res.status(400).json(error)
     }
 }

@@ -16,6 +16,6 @@ const OperatorModel=sequelize.define('operators',{
     }
 })
 
-// OperationModel.hasMany(BillingModel)
+OperatorModel.hasMany(UserModel)
 
 module.exports=OperatorModel
