@@ -95,7 +95,7 @@ const getInfoAdmin=async(req,res)=>{
                         n_operation:i.n_operation,
                         createdAt:i.createdAt,
                         updatedAt:i.updatedAt,
-                        date_payout:item.date_payout,
+                        date_payout:i.date_payout,
                         pdfLink:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.pdfLink,
                         xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink,
                         date_expiration:i.date_expiration
@@ -257,7 +257,7 @@ const getOperation=async(req,res)=>{
                         bank_name:i.bank_name,
                         createdAt:i.createdAt,
                         updatedAt:i.updatedAt,
-                        date_payout:item.date_payout,
+                        date_payout:i.date_payout,
                         pdfLink:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.pdfLink,
                         xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink,
                         date_expiration:i.date_expiration
