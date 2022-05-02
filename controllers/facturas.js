@@ -232,6 +232,7 @@ const getOperation=async(req,res)=>{
                 n_operation:item.n_operation,
                 name:item.name,
                 contact:item.contact,
+                status:item.status,
                 billings:item.billings.map(i=>{
                     return {
                         id:i.uuid,
@@ -278,7 +279,8 @@ const editOperation=async(req,res)=>{
         const idsArray=req.body.ids.slice(1,-1).split(',')
         const billings= await Operation.findOne({where:{n_operation:req.body.n_operation,name:req.body.name,contact:req.body.contact}})
         await Billing.update({operationId:null,n_operation:null},{where:{operationId:billings.id}})
-        await Billing.update({n_operation:req.body.n_operation,operationId:billings.id},{where:{uuid:idsArray}})
+        await billings.update({status:req.body.status})
+        await Billing.update({n_operation:req.body.n_operation,operationId:billings.id,status:req.body.status},{where:{uuid:idsArray}})
         return res.status(200).json({msg:'updated successfully'})
     } catch (error) {
         console.log(error)
