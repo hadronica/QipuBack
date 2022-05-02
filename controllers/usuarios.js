@@ -1,6 +1,6 @@
 const User=require('../models/usuarios')
 const bcrypt=require('bcryptjs')
-const {templateResetear, emailResetear, templateVerificar, emailVerificar, emailDefault } = require("../middlewares/emailValidator")
+const {templateResetear, emailResetear, templateVerificar, emailVerificar, emailDefault, templateVerificarAdmin } = require("../middlewares/emailValidator")
 const { v4: uuidv4 } = require('uuid');
 const { customAlphabet } = require('nanoid');
 const nanoid=customAlphabet('1234567890abcdefghijklmnopqrstuvwx')
@@ -104,6 +104,24 @@ const crearUser=async(req,res)=>{
     }
 }
 
+const crearUserAdmin=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:0}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        req.body.password=bcrypt.hashSync(req.body.password)
+        req.body.uuid=uuidv4()
+        const user= await User.create(req.body)
+        const template= templateVerificarAdmin(user.name,user.email)
+        await emailVerificar(req.body.email,template)
+        return res.status(200).json({status:user.status,role:user.role,id:user.uuid})
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json(error)
+    }
+}
+
 const loginUser=async(req,res)=>{
     const user=await User.findOne({where:{email:req.body.email}})
     if(!user.status){
@@ -182,5 +200,6 @@ module.exports={
     resetPassword,
     emailUser,
     editUser,
-    mostrarUsersNameToken
+    mostrarUsersNameToken,
+    crearUserAdmin
 }
