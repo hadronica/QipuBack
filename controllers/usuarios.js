@@ -1,4 +1,5 @@
 const User=require('../models/usuarios')
+const Operator=require('../models/operadores')
 const bcrypt=require('bcryptjs')
 const {templateResetear, emailResetear, templateVerificar, emailVerificar, emailDefault, templateVerificarAdmin } = require("../middlewares/emailValidator")
 const { v4: uuidv4 } = require('uuid');
@@ -113,9 +114,123 @@ const crearUserAdmin=async(req,res)=>{
         req.body.password=bcrypt.hashSync(req.body.password)
         req.body.uuid=uuidv4()
         const user= await User.create(req.body)
+        if(user.role==="1"){
+            await Operator.create({name:req.body.name,uuid:user.uuid})
+        }
         const template= templateVerificarAdmin(user.name,user.email)
         await emailVerificar(req.body.email,template)
         return res.status(200).json({status:user.status,role:user.role,id:user.uuid})
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json(error)
+    }
+}
+
+const mostrarOperadores=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:0}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const operadores= await Operator.findAll({include:[User]})
+        const newOperadores=operadores.map(item=>{
+            return {
+                id:item.uuid,
+                name:item.name,
+                users:item.users.map(i=>{
+                    return {
+                        id:i.uuid,
+                        name:i.name,
+                        email:i.email,
+                        status:i.status,
+                        phone:i.phone,
+                        ruc:i.ruc,
+                        company_name:i.company_name,
+                        social_sector:i.social_sector,
+                        annual_income:i.annual_income,
+                        name_r:i.name_r,
+                        position:i.position,
+                        typeDocument:i.typeDocument,
+                        document:i.document,
+                        email_r:i.email_r,
+                        pep:i.pep,
+                        validity:i.validity,
+                        updatedAt:i.updatedAt,
+                    }
+                })
+            }
+        })
+        return res.status(200).json(newOperadores)
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json(error)
+    }
+}
+
+const asignarOperador=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:0}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const idsArray=req.body.ids.slice(1,-1).split(',')
+        const operator=await Operator.findOne({where:{uuid:req.body.id}})
+        await User.update({operatorId:operator.id},{where:{uuid:idsArray}}) 
+        return res.status(200).json({msg:'updated successfully'})
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json(error)
+    }
+}
+const mostrarUsersOperador=async(req,res)=>{
+    try {
+       const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:1}})
+       if(!isAdmin){
+           return res.status(401).json({msg:'permission denied'})
+       }
+       const operator= await Operator.findOne({where:{uuid:req.headers.token}})
+       const user=await User.findAll({where:{operatorId:operator.id}})
+       if(!user){
+           return res.status(401).json({msg:'users not found'})
+       }
+       const newUsers=user.map((item)=>{
+           return {
+               id:item.uuid,
+               name:item.name,
+               email:item.email,
+               status:item.status,
+               phone:item.phone,
+               ruc:item.ruc,
+               company_name:item.company_name,
+               social_sector:item.social_sector,
+               annual_income:item.annual_income,
+               name_r:item.name_r,
+               position:item.position,
+               typeDocument:item.typeDocument,
+               document:item.document,
+               email_r:item.email_r,
+               pep:item.pep,
+               validity:item.validity,
+               updatedAt:item.updatedAt,
+           }
+       })
+       return res.status(200).json(newUsers)
+   } catch (error) {
+       return res.status(400).json(error)
+   }
+}
+
+const editOperator=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:0}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const idsArray=req.body.ids.slice(1,-1).split(',')
+        const operator= await Operator.findOne({where:{uuid:req.body.id}})
+        await User.update({operatorId:null},{where:{operatorId:operator.id}})
+        await User.update({operatorId:operator.id},{where:{uuid:idsArray}})
+        return res.status(200).json({msg:'updated successfully'})
     } catch (error) {
         console.log(error)
         return res.status(400).json(error)
@@ -201,5 +316,9 @@ module.exports={
     emailUser,
     editUser,
     mostrarUsersNameToken,
-    crearUserAdmin
+    crearUserAdmin,
+    asignarOperador,
+    mostrarOperadores,
+    mostrarUsersOperador,
+    editOperator
 }

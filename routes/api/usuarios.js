@@ -1,5 +1,5 @@
 const {check}=require('express-validator')
-const { crearUser, loginUser, forgotPassword, resetPassword, mostrarUsers,mostrarUser, emailUser,editUser, mostrarUsersNameToken, crearUserAdmin } = require('../../controllers/usuarios')
+const { crearUser, loginUser, forgotPassword, resetPassword, mostrarUsers,mostrarUser, emailUser,editUser, mostrarUsersNameToken, crearUserAdmin, asignarOperador, mostrarOperadores, mostrarUsersOperador, editOperator } = require('../../controllers/usuarios')
 const { validarCampo } = require('../../middlewares/validarCampo')
 const { existeRuc, noExisteRuc, noExisteEmail, existeEmail } = require('../../middlewares/dbValidator')
 const router=require('express').Router()
@@ -11,8 +11,11 @@ router.put('/edit',editUser)
 router.post('/listusers',mostrarUsers)
 //MOSTRAR USER LOGIN--
 router.post('/getuser',mostrarUser)
+router.get('/getoperator',mostrarUsersOperador)
 
 router.get('/nametoken',mostrarUsersNameToken)
+
+router.get('/listoperators',mostrarOperadores)
 
 //LOGEAR USER---
 router.post('/login',[
@@ -27,6 +30,9 @@ router.post('/sign-in-admin',[
     check('email').custom(existeEmail),
     validarCampo
 ],crearUserAdmin)
+
+router.put('/asign-users',asignarOperador)
+router.put('/edit-operator',editOperator)
 
 router.post('/sign-in',[
     check('ruc').custom(existeRuc),

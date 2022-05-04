@@ -11,8 +11,8 @@ const OperatorModel=sequelize.define('operators',{
     name:{
         type:Sequelize.STRING,
     },
-    users:{
-        type:Sequelize.STRING,
+    uuid:{
+        type:Sequelize.STRING
     }
 })
 
