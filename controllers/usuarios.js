@@ -173,9 +173,8 @@ const asignarOperador=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const idsArray=req.body.ids.slice(1,-1).split(',')
         const operator=await Operator.findOne({where:{uuid:req.body.id}})
-        await User.update({operatorId:operator.id},{where:{uuid:idsArray}}) 
+        await User.update({operatorId:operator.id},{where:{uuid:req.body.idUser}}) 
         return res.status(200).json({msg:'updated successfully'})
     } catch (error) {
         console.log(error)
