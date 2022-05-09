@@ -1,5 +1,5 @@
 const {check}=require('express-validator')
-const { crearUser, loginUser, forgotPassword, resetPassword, mostrarUsers,mostrarUser, emailUser,editUser, mostrarUsersNameToken, crearUserAdmin, asignarOperador, mostrarOperadores, mostrarUsersOperador, editOperator } = require('../../controllers/usuarios')
+const { crearUser, loginUser, forgotPassword, resetPassword, mostrarUsers,mostrarUser, emailUser,editUser, mostrarUsersNameToken, crearUserAdmin, asignarOperador, mostrarOperadores, mostrarUsersOperador, editOperator, deleteOperator } = require('../../controllers/usuarios')
 const { validarCampo } = require('../../middlewares/validarCampo')
 const { existeRuc, noExisteRuc, noExisteEmail, existeEmail } = require('../../middlewares/dbValidator')
 const router=require('express').Router()
@@ -33,6 +33,7 @@ router.post('/sign-in-admin',[
 
 router.put('/asign-users',asignarOperador)
 router.put('/edit-operator',editOperator)
+router.put('/deleteoperator',deleteOperator)
 
 router.post('/sign-in',[
     check('ruc').custom(existeRuc),
@@ -64,6 +65,7 @@ router.post('/reset-password',[
 router.post('/emailsender',[
     check('email').custom(noExisteEmail)
 ],emailUser)
+
 
 
 
