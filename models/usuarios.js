@@ -72,6 +72,9 @@ const UserModel=sequelize.define('users',{
         },
         validity:{
             type:Sequelize.STRING
+        },
+        operator_name:{
+            type:Sequelize.STRING
         }
 },{
     hooks:{
