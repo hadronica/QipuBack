@@ -115,7 +115,7 @@ const crearUserAdmin=async(req,res)=>{
         req.body.uuid=uuidv4()
         const user= await User.create(req.body)
         if(user.role==="1"){
-            await Operator.create({name:req.body.name,uuid:user.uuid})
+            await Operator.create({name:req.body.name,uuid:user.uuid,email:req.body.email})
         }
         const template= templateVerificarAdmin(user.name,user.email)
         await emailVerificar(req.body.email,template)
@@ -137,6 +137,7 @@ const mostrarOperadores=async(req,res)=>{
             return {
                 id:item.uuid,
                 name:item.name,
+                email:item.email,
                 users:item.users.map(i=>{
                     return {
                         id:i.uuid,

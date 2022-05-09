@@ -13,6 +13,9 @@ const OperatorModel=sequelize.define('operators',{
     },
     uuid:{
         type:Sequelize.STRING
+    },
+    email:{
+        type:Sequelize.STRING
     }
 })
 
