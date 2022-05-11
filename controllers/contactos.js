@@ -1,5 +1,6 @@
 const User=require('../models/usuarios')
 const Contact=require('../models/contactos')
+const Operator=require('../models/operadores')
 const { nanoid } = require('nanoid')
 
 const crearContacto=async(req,res)=>{
@@ -81,7 +82,7 @@ const listarContactosAdmin=async(req,res)=>{
 }
 const listarContactosUserAdmin=async(req,res)=>{
     try {
-        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:0}})
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
@@ -113,6 +114,40 @@ const listarContactosUserAdmin=async(req,res)=>{
     }
 }
 
+const listarContactosUserOperator=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:1}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const operator=await Operator.findOne({where:{uuid:isAdmin.uuid}})
+        const contacts=await User.findAll({where:{operatorId:operator.id},include:[Contact]})
+        const usercontact=contacts.map((item)=>{
+            return {
+                id:item.uuid,
+                name:item.name,
+                company_name:item.company_name,
+                contacts:item.contacts.map(i=>{
+                    return {
+                        id:i.uuid,
+                        ruc:i.ruc,
+                        full_name:i.full_name,
+                        email:i.email,
+                        email_extra:i.email_extra,
+                        phone:i.phone,
+                        name_debt:i.name_debt,
+                        status:i.status,
+                        createdAt:i.createdAt,
+                        updatedAt:i.updatedAt,
+                    }
+                })
+            }
+        })
+        return res.status(200).json(usercontact)
+    } catch (error) {
+        return res.status(400).json(error)
+    }
+}
 const listarContacto=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
@@ -160,5 +195,6 @@ module.exports={
     listarContactosUserAdmin,
     listarContactosporUser,
     modificarContacto,
-    eliminarContacto
+    eliminarContacto,
+    listarContactosUserOperator
 }
