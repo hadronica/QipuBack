@@ -73,7 +73,7 @@ const mostrarUsers=async(req,res)=>{
 }
 const mostrarUsersNameToken=async(req,res)=>{
     try {
-       const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+       const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:0}})
        if(!isAdmin){
            return res.status(401).json({msg:'permission denied'})
        }
@@ -91,6 +91,28 @@ const mostrarUsersNameToken=async(req,res)=>{
    } catch (error) {
        return res.status(400).json(error)
    }
+}
+const mostrarUsersNameTokenOperador=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:1}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const operator=await Operator.findOne({where:{uuid:isAdmin.uuid}})
+        const contacts=await User.findAll({where:{operatorId:operator.id}})
+        if(!contacts){
+            return res.status(401).json({msg:'users not found'})
+        }
+        const newUsers=contacts.map((item)=>{
+            return {
+                id:item.uuid,
+                name:item.name,
+            }
+        })
+        return res.status(200).json(newUsers)
+    } catch (error) {
+        return res.status(400).json(error)
+    }
 }
 
 const crearUser=async(req,res)=>{
@@ -339,5 +361,6 @@ module.exports={
     mostrarOperadores,
     mostrarUsersOperador,
     editOperator,
-    deleteOperator
+    deleteOperator,
+    mostrarUsersNameTokenOperador
 }
