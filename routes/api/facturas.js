@@ -1,7 +1,8 @@
-const { getInfo, getInfoAdmin, createBill, editBill, getInfoUserAdmin, operationBill, getOperation, editOperation} = require('../../controllers/facturas')
+const { getInfo, getInfoAdmin, createBill, editBill, getInfoUserAdmin, operationBill, getOperation, editOperation, getInfoOperator} = require('../../controllers/facturas')
 
 const router=require('express').Router()
 
+router.get('/list-operator',getInfoOperator)
 router.get('/list-admin',getInfoAdmin)
 router.get('/list',getInfo)
 router.get('/list-operations',getOperation)

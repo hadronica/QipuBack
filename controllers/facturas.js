@@ -2,6 +2,7 @@ const User=require('../models/usuarios')
 const Billing=require('../models/facturas')
 const Contact=require('../models/contactos')
 const Operation=require('../models/operaciones')
+const Operator=require('../models/operadores')
 const fs=require('fs')
 require('dotenv').config()
 const { nanoid } = require('nanoid')
@@ -58,11 +59,64 @@ const getInfo=async(req,res)=>{
 
 const getInfoAdmin=async(req,res)=>{
     try {
-        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:0}})
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
         const bills=await User.findAll({where:{role:2},include:[Billing]})
+        if(bills.length===0){
+            return res.status(200).json({msg:'billings not found'})
+        }
+        const newBills=bills.map(item=>{
+            return {
+                id:item.uuid,
+                name:item.name,
+                company_name:item.company_name,
+                billings:item.billings.map(i=>{
+                    return {
+                        id:i.uuid,
+                        billing_id:i.billing_id,
+                        amount:i.amount,
+                        detraction:i.detraction,
+                        net_amount:i.net_amount,
+                        account:i.account,
+                        contactName:i.contactName,
+                        date_emission:i.date_emission,
+                        status:i.status,
+                        date_payment:i.date_payment,
+                        n_days:i.n_days,
+                        monthly_fee:i.monthly_fee,
+                        commission:i.commission,
+                        partnet:i.partnet,
+                        first_payment:i.first_payment,
+                        second_payment:i.second_payment,
+                        commercial:i.commercial,
+                        n_commercial_qipu:i.n_commercial_qipu,
+                        bank_name:i.bank_name,
+                        n_operation:i.n_operation,
+                        createdAt:i.createdAt,
+                        updatedAt:i.updatedAt,
+                        date_payout:i.date_payout,
+                        pdfLink:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.pdfLink,
+                        xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink,
+                        date_expiration:i.date_expiration
+                    }
+                })
+            }
+        })
+        return res.status(200).json(newBills)
+    } catch (error) {
+        return res.status(400).json(error)
+    }
+}
+const getInfoOperator=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:1}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const operator=await Operator.findOne({where:{uuid:isAdmin.uuid}})
+        const bills=await User.findAll({where:{role:2,operatorId:operator.id},include:[Billing]})
         if(bills.length===0){
             return res.status(200).json({msg:'billings not found'})
         }
@@ -297,5 +351,6 @@ module.exports={
     editBill,
     operationBill,
     getOperation,
-    editOperation
+    editOperation,
+    getInfoOperator
 }
