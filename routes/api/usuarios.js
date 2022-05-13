@@ -1,5 +1,5 @@
 const {check}=require('express-validator')
-const { crearUser, loginUser, forgotPassword, resetPassword, mostrarUsers,mostrarUser, emailUser,editUser, mostrarUsersNameToken, crearUserAdmin, asignarOperador, mostrarOperadores, mostrarUsersOperador, editOperator, deleteOperator, mostrarUsersNameTokenOperador } = require('../../controllers/usuarios')
+const { crearUser, loginUser, forgotPassword, resetPassword, mostrarUsers,mostrarUser, emailUser,editUser, mostrarUsersNameToken, crearUserAdmin, asignarOperador, mostrarOperadores, mostrarUsersOperador, editOperator, deleteOperator, mostrarUsersNameTokenOperador, crearUserOperator } = require('../../controllers/usuarios')
 const { validarCampo } = require('../../middlewares/validarCampo')
 const { existeRuc, noExisteRuc, noExisteEmail, existeEmail } = require('../../middlewares/dbValidator')
 const router=require('express').Router()
@@ -46,6 +46,17 @@ router.post('/sign-in',[
     check('password','El password debe ser más de 6 letras').isLength({min:6}),
     validarCampo
 ],crearUser)
+
+router.post('/sign-in-operator',[
+    check('ruc').custom(existeRuc),
+    check('ruc','El ruc es obligatorio').not().isEmpty(),
+    check('ruc','El ruc debe ser de 11 digitos').isLength({min:11,max:11}),
+    check('email','El email no es valido').isEmail(),
+    check('email').custom(existeEmail),
+    check('email_r','El email no es valido').isEmail(),
+    check('password','El password debe ser más de 6 letras').isLength({min:6}),
+    validarCampo
+],crearUserOperator)
 
 //RECUPERAR CONTRASEÑA---
 router.post('/forgot-password',[

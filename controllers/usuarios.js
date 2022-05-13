@@ -127,6 +127,25 @@ const crearUser=async(req,res)=>{
         return res.status(400).json(error)
     }
 }
+const crearUserOperator=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:1}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const operator=await Operator.findOne({where:{uuid:isAdmin.uuid}})
+        req.body.operatorId=operator.id
+        req.body.operator_name=operator.name
+        req.body.password=bcrypt.hashSync(req.body.password)
+        req.body.uuid=uuidv4()
+        const user= await User.create(req.body)
+        const template= templateVerificar(user.name,user.email,user.ruc,user.company_name)
+        await emailVerificar(req.body.email,template)
+        return res.status(200).json({status:user.status,role:user.role,id:user.uuid})
+    } catch (error) {
+        return res.status(400).json(error)
+    }
+}
 
 const crearUserAdmin=async(req,res)=>{
     try {
@@ -362,5 +381,6 @@ module.exports={
     mostrarUsersOperador,
     editOperator,
     deleteOperator,
-    mostrarUsersNameTokenOperador
+    mostrarUsersNameTokenOperador,
+    crearUserOperator
 }
