@@ -354,11 +354,30 @@ const deleteOperator=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const operator= await User.findOne({where:{uuid:req.body.id}})
+        const operator= await User.findOne({where:{uuid:req.body.id,role:1}})
+        if(!operator){
+            return res.status(401).json({msg:'operator not found'})
+        }
         const operatorN= await Operator.findOne({where:{uuid:req.body.id}})
         await User.update({operatorId:null},{where:{operatorId:operatorN.id}})
         await User.destroy({where:{uuid:operator.uuid}})
         await Operator.destroy({where:{uuid:operator.uuid}})
+        return res.status(200).json({msg:'deleted successfully'})
+    } catch (error) {
+        return res.status(400).json(error)
+    }
+}
+const deleteUser=async(req,res)=>{
+    try {
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:0}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const user= await User.findOne({where:{uuid:req.body.id,role:2}})
+        if(!user){
+            return res.status(401).json({msg:'user not found'})
+        }
+        await User.destroy({where:{uuid:user.uuid}})
         return res.status(200).json({msg:'deleted successfully'})
     } catch (error) {
         return res.status(400).json(error)
@@ -382,5 +401,6 @@ module.exports={
     editOperator,
     deleteOperator,
     mostrarUsersNameTokenOperador,
-    crearUserOperator
+    crearUserOperator,
+    deleteUser
 }
