@@ -34,10 +34,8 @@ const uploadFile=async(req,res)=>{
     const user=await User.findOne({where:{uuid:req.headers.token}})
     if(!user){return res.status(401).json({msg:'User not found'})}
     const newName=user.name.replaceAll(" ","")
-
     const {file}=req.files
     const {tempFilePath}=req.files.file
-    const arrTypes=[ruc,rtt,dni,repre,info]
     fs.readFile(tempFilePath, function(err, data) {
       let params={Bucket:process.env.AWSBUCKET,Key:`${newName}/${req.params.type}`,Body: data,ACL: 'public-read',ContentType:file.mimetype}
       s3.upload(params, function(err, data) {
