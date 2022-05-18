@@ -8,7 +8,6 @@ require('dotenv').config()
 const { nanoid } = require('nanoid')
 
 const aws=require('aws-sdk')
-const { emailFactura, templateFactura } = require('../middlewares/emailValidator')
 const s3=new aws.S3({
     region:'sa-east-1',
     accessKeyId:process.env.AWSID,
@@ -232,8 +231,6 @@ const createBill=async(req,res)=>{
         })
         req.body.xmlLink=`${newName}/pagadores/${newContact}/XML${req.body.billing_id}`
         await Billing.create(req.body)
-        const template=templateFactura(user.name,req.body.billing_id,user.email)
-        await emailFactura(user.email,template)
         return res.status(200).json({msg:'created successfully'})
 } 
     catch (error) {
