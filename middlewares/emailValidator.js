@@ -81,7 +81,6 @@ const templateResetear=(name,token,email)=>{
 module.exports={
     emailResetear,
     emailVerificar,
-    emailFactura,
     emailDefault,
     templateResetear,
     templateVerificar,
