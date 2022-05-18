@@ -38,26 +38,25 @@ const uploadFile=async(req,res)=>{
     const {file}=req.files
     const {tempFilePath}=req.files.file
     const arrTypes=[ruc,rtt,dni,repre,info]
-    if(arrTypes.indexOf(req.params.type!==-1)){
-      fs.readFile(tempFilePath, function(err, data) {
-          let params={Bucket:process.env.AWSBUCKET,Key:`${newName}/${req.params.type}`,Body: data,ACL: 'public-read',ContentType:file.mimetype}
-          s3.upload(params, function(err, data) {
-            fs.unlink(tempFilePath, function(err) {
-              if (err) {
-                throw new Error(err)
-              }
-            })
-  
+    fs.readFile(tempFilePath, function(err, data) {
+      let params={Bucket:process.env.AWSBUCKET,Key:`${newName}/${req.params.type}`,Body: data,ACL: 'public-read',ContentType:file.mimetype}
+      s3.upload(params, function(err, data) {
+        fs.unlink(tempFilePath, function(err) {
           if (err) {
-            return res.status(400).json({msg:err})
-          } else {
-  
-            return res.status(200).json({msg:'uploaded successfully',link:data.Location})
+            throw new Error(err)
           }
         })
-      })
-    }
-}
+
+      if (err) {
+        return res.status(400).json({msg:err})
+      } else {
+
+        return res.status(200).json({msg:'uploaded successfully',link:data.Location})
+      }
+    })
+    })
+  }
+  
 
 
 
