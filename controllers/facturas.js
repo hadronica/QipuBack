@@ -13,6 +13,7 @@ const s3=new aws.S3({
     accessKeyId:process.env.AWSID,
     secretAccessKey:process.env.AWSKEY
 })
+const awsUrl=process.env.AWSURL
 
 const getInfo=async(req,res)=>{
     try {
@@ -96,8 +97,8 @@ const getInfoAdmin=async(req,res)=>{
                         createdAt:i.createdAt,
                         updatedAt:i.updatedAt,
                         date_payout:i.date_payout,
-                        pdfLink:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.pdfLink,
-                        xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink,
+                        pdfLink:awsUrl+i.pdfLink,
+                        xmlFile:awsUrl+i.xmlLink,
                         date_expiration:i.date_expiration
                     }
                 })
@@ -149,8 +150,8 @@ const getInfoOperator=async(req,res)=>{
                         createdAt:i.createdAt,
                         updatedAt:i.updatedAt,
                         date_payout:i.date_payout,
-                        pdfLink:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.pdfLink,
-                        xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink,
+                        pdfLink:awsUrl+i.pdfLink,
+                        xmlFile:awsUrl+i.xmlLink,
                         date_expiration:i.date_expiration
                     }
                 })
@@ -309,8 +310,8 @@ const getOperation=async(req,res)=>{
                         createdAt:i.createdAt,
                         updatedAt:i.updatedAt,
                         date_payout:i.date_payout,
-                        pdfLink:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.pdfLink,
-                        xmlFile:"https://qipudb-test.s3.sa-east-1.amazonaws.com/"+i.xmlLink,
+                        pdfLink:awsUrl+i.pdfLink,
+                        xmlFile:awsUrl+i.xmlLink,
                         date_expiration:i.date_expiration
                     }
                 })

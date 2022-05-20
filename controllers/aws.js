@@ -8,6 +8,7 @@ const s3=new aws.S3({
     accessKeyId:process.env.AWSID,
     secretAccessKey:process.env.AWSKEY
 })
+const awsUrl=process.env.AWSURL
 
 const listFiles=async(req,res)=>{
     const user=await User.findOne({where:{uuid:req.headers.token}})
@@ -23,7 +24,7 @@ const listFiles=async(req,res)=>{
           const type=item.Key.replace("/"," ").split(" ")
           return {
             type:type[1] , 
-            file: "https://qipudb-test.s3.sa-east-1.amazonaws.com/"+item.Key
+            file: awsUrl+item.Key
           }
         })
         return res.status(200).json(links)
