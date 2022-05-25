@@ -13,9 +13,8 @@ const awsUrl=process.env.AWSURL
 const listFiles=async(req,res)=>{
     const user=await User.findOne({where:{uuid:req.headers.token}})
     if(!user){return res.status(401).json({msg:'User not found'})}
-    const newName=user.name.replaceAll(" ","")
-
-    let params={Bucket:process.env.AWSBUCKET,Prefix:`${newName}`}
+    const userRuc=user.ruc
+    let params={Bucket:process.env.AWSBUCKET,Prefix:`${userRuc}`}
     s3.listObjectsV2(params,(err,data)=>{
         if(err) throw err
 
@@ -34,11 +33,11 @@ const listFiles=async(req,res)=>{
 const uploadFile=async(req,res)=>{
     const user=await User.findOne({where:{uuid:req.headers.token}})
     if(!user){return res.status(401).json({msg:'User not found'})}
-    const newName=user.name.replaceAll(" ","")
+    const userRuc=user.ruc
     const {file}=req.files
     const {tempFilePath}=req.files.file
     fs.readFile(tempFilePath, function(err, data) {
-      let params={Bucket:process.env.AWSBUCKET,Key:`${newName}/${req.params.type}`,Body: data,ACL: 'public-read',ContentType:file.mimetype}
+      let params={Bucket:process.env.AWSBUCKET,Key:`${userRuc}/${req.params.type}`,Body: data,ACL: 'public-read',ContentType:file.mimetype}
       s3.upload(params, function(err, data) {
         fs.unlink(tempFilePath, function(err) {
           if (err) {

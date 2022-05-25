@@ -200,15 +200,16 @@ const getInfoUserAdmin=async(req,res)=>{
 const createBill=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
-        const newName=user.name.replaceAll(" ","")
+        const userRuc=user.ruc
         req.body.userId=user.id
+        req.body.userUuid=user.uuid
         req.body.uuid=nanoid(10)
         const contact=req.body.contactName
         const newContact=contact.replaceAll(" ","")
         const pdfFile=req.files.pdf
         const tempPdfPath=pdfFile.tempFilePath
         fs.readFile(tempPdfPath, function(err, data) {
-            let params={Bucket:process.env.AWSBUCKET,Key:`${newName}/pagadores/${newContact}/PDF${req.body.billing_id}`,Body: data,ACL: 'public-read',ContentType:pdfFile.mimetype}
+            let params={Bucket:process.env.AWSBUCKET,Key:`${userRuc}/pagadores/${newContact}/PDF${req.body.billing_id}`,Body: data,ACL: 'public-read',ContentType:pdfFile.mimetype}
             s3.upload(params, function(err, data) {
                 fs.unlink(tempPdfPath, function(err) {
                     if (err) {
@@ -217,11 +218,11 @@ const createBill=async(req,res)=>{
                 })
             })
         })
-        req.body.pdfLink=`${newName}/pagadores/${newContact}/PDF${req.body.billing_id}`
+        req.body.pdfLink=`${userRuc}/pagadores/${newContact}/PDF${req.body.billing_id}`
         const xmlFile=req.files.xml
         const tempXmlPath=xmlFile.tempFilePath
         fs.readFile(tempXmlPath, function(err, data) {
-            let params={Bucket:process.env.AWSBUCKET,Key:`${newName}/pagadores/${newContact}/XML${req.body.billing_id}`,Body: data,ACL: 'public-read',ContentType:xmlFile.mimetype}
+            let params={Bucket:process.env.AWSBUCKET,Key:`${userRuc}/pagadores/${newContact}/XML${req.body.billing_id}`,Body: data,ACL: 'public-read',ContentType:xmlFile.mimetype}
             s3.upload(params, function(err, data) {
                 fs.unlink(tempXmlPath, function(err) {
                     if (err) {
@@ -230,7 +231,7 @@ const createBill=async(req,res)=>{
                 })
             })
         })
-        req.body.xmlLink=`${newName}/pagadores/${newContact}/XML${req.body.billing_id}`
+        req.body.xmlLink=`${userRuc}/pagadores/${newContact}/XML${req.body.billing_id}`
         await Billing.create(req.body)
         return res.status(200).json({msg:'created successfully'})
 } 
@@ -288,6 +289,7 @@ const getOperation=async(req,res)=>{
                 status:item.status,
                 billings:item.billings.map(i=>{
                     return {
+                        userId:i.userUuid,
                         id:i.uuid,
                         billing_id:i.billing_id,
                         amount:i.amount,
@@ -319,6 +321,7 @@ const getOperation=async(req,res)=>{
         })
         return res.status(200).json(newOperation)
     } catch (error) {
+        console.log(error)
         return res.status(400).json(error)
     }
 }

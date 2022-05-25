@@ -79,6 +79,9 @@ const BillingModel=sequelize.define('billings',{
     },
     date_expiration:{
         type:Sequelize.STRING
+    },
+    userUuid:{
+        type:Sequelize.STRING
     }
 })
 
