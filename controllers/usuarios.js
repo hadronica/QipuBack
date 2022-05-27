@@ -84,7 +84,7 @@ const mostrarUsersNameToken=async(req,res)=>{
        const newUsers=user.map((item)=>{
            return {
                id:item.uuid,
-               name:item.name,
+               name:item.company_name,
            }
        })
        return res.status(200).json(newUsers)
