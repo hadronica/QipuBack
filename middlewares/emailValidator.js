@@ -1,13 +1,13 @@
 const nodemailer = require("nodemailer");
 
 const mail={
-    user: 'mcorteztouzett@gmail.com',
-    pass:'cvwlnpigarojrycl'
+    user: 'notificaciones@qipufinance.com',
+    pass:'Rusia.2020.*'
 }
 
   // create reusable transporter object using the default SMTP transport
 let transporter = nodemailer.createTransport({
-    host:'smtp.gmail.com',
+    host:'smtpout.secureserver.net',
     port:465,
     secure:true,
     auth: {
