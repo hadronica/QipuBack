@@ -44,7 +44,6 @@ router.post('/sign-in',[
     check('email','El email no es valido').isEmail(),
     check('email').custom(existeEmail),
     check('email_r','El email no es valido').isEmail(),
-    check('password','El password debe ser más de 6 letras').isLength({min:6}),
     validarCampo
 ],crearUser)
 
@@ -55,7 +54,6 @@ router.post('/sign-in-operator',[
     check('email','El email no es valido').isEmail(),
     check('email').custom(existeEmail),
     check('email_r','El email no es valido').isEmail(),
-    check('password','El password debe ser más de 6 letras').isLength({min:6}),
     validarCampo
 ],crearUserOperator)
 
@@ -68,8 +66,6 @@ router.post('/forgot-password',[
 ],forgotPassword)
 
 router.post('/reset-password',[
-    check('password','El password debe ser más de 6 letras').isLength({min:6}),
-    check('password2','El password debe ser más de 6 letras').isLength({min:6}),
     check('password','La contraseña es obligatoria').not().isEmpty(),
     check('password2','La contraseña es obligatoria').not().isEmpty(),
     validarCampo
