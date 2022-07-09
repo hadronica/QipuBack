@@ -342,7 +342,6 @@ const editPassword=async(req,res)=>{
         }
         const newPassword=bcrypt.hashSync(password)
         await user.update({password:newPassword},{where:{uuid:uuid}})
-        await user.update(req.body)
         return res.status(200).json({msg:'updated successfully'})
     } catch (error) {
         return res.status(400).json(error)
