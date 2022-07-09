@@ -329,25 +329,6 @@ const resetPassword=async(req,res)=>{
         return res.status(400).json({msg:'invalid token'})
     }
 }
-const editPassword=async(req,res)=>{
-    try {
-        const {password,uuid}=req.body
-        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
-        if(!isAdmin){
-            return res.status(401).json({msg:'permission denied'})
-        }
-        const user= await User.findOne({where:{uuid:req.body.id}})
-        if(!user){
-            return res.status(400).json({msg:'user not found'})
-        }
-        const newPassword=bcrypt.hashSync(password)
-        await user.update({password:newPassword},{where:{uuid:uuid}})
-        return res.status(200).json({msg:'updated successfully'})
-    } catch (error) {
-        return res.status(400).json(error)
-    }
-}
-
 
 const editUser=async(req,res)=>{
     try {
@@ -397,6 +378,20 @@ const deleteUser=async(req,res)=>{
         }
         await User.destroy({where:{uuid:user.uuid}})
         return res.status(200).json({msg:'deleted successfully'})
+    } catch (error) {
+        return res.status(400).json(error)
+    }
+}
+const editPassword=async(req,res)=>{
+    try {
+        const {password,email}=req.body
+        const user= await User.findOne({where:{email:email}})
+        if(!user){
+            return res.status(400).json({msg:'user not found'})
+        }
+        const newPassword=bcrypt.hashSync(password)
+        await user.update({password:newPassword},{where:{email:email}})
+        return res.status(200).json({msg:'updated successfully'})
     } catch (error) {
         return res.status(400).json(error)
     }
