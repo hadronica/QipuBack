@@ -329,6 +329,25 @@ const resetPassword=async(req,res)=>{
         return res.status(400).json({msg:'invalid token'})
     }
 }
+const editPassword=async(req,res)=>{
+    try {
+        const {password,uuid}=req.body
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const user= await User.findOne({where:{uuid:req.body.id}})
+        if(!user){
+            return res.status(400).json({msg:'user not found'})
+        }
+        const newPassword=bcrypt.hashSync(password)
+        await user.update({password:newPassword},{where:{uuid:uuid}})
+        await user.update(req.body)
+        return res.status(200).json({msg:'updated successfully'})
+    } catch (error) {
+        return res.status(400).json(error)
+    }
+}
 
 
 const editUser=async(req,res)=>{
@@ -402,5 +421,6 @@ module.exports={
     deleteOperator,
     mostrarUsersNameTokenOperador,
     crearUserOperator,
-    deleteUser
+    deleteUser,
+    editPassword
 }
