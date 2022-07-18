@@ -36,58 +36,59 @@ const mostrarUser=async(req,res)=>{
 
 const mostrarUsers=async(req,res)=>{
     try {
-       const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
-       if(!isAdmin){
-           return res.status(401).json({msg:'permission denied'})
-       }
-       const user=await User.findAll({where:{role:2}})
-       if(!user){
-           return res.status(401).json({msg:'users not found'})
-       }
-       const newUsers=user.map((item)=>{
-           return {
-               id:item.uuid,
-               name:item.name,
-               email:item.email,
-               status:item.status,
-               phone:item.phone,
-               ruc:item.ruc,
-               company_name:item.company_name,
-               social_sector:item.social_sector,
-               annual_income:item.annual_income,
-               name_r:item.name_r,
-               position:item.position,
-               typeDocument:item.typeDocument,
-               document:item.document,
-               email_r:item.email_r,
-               pep:item.pep,
-               validity:item.validity,
-               updatedAt:item.updatedAt,
-               operator_name:item.operator_name
-           }
-       })
-       return res.status(200).json(newUsers)
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
+        const {from,to}=req.query
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const user=await User.findAll({where:{role:2},limit:Number(to),offset:Number(from),subQuery:false})
+        if(!user){
+            return res.status(401).json({msg:'users not found'})
+        }
+        const newUsers=user.map((item)=>{
+            return {
+                id:item.uuid,
+                name:item.name,
+                email:item.email,
+                status:item.status,
+                phone:item.phone,
+                ruc:item.ruc,
+                company_name:item.company_name,
+                social_sector:item.social_sector,
+                annual_income:item.annual_income,
+                name_r:item.name_r,
+                position:item.position,
+                typeDocument:item.typeDocument,
+                document:item.document,
+                email_r:item.email_r,
+                pep:item.pep,
+                validity:item.validity,
+                updatedAt:item.updatedAt,
+                operator_name:item.operator_name
+            }
+        })
+        return res.status(200).json(newUsers)
    } catch (error) {
        return res.status(400).json(error)
    }
 }
 const mostrarUsersNameToken=async(req,res)=>{
     try {
-       const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:0}})
-       if(!isAdmin){
-           return res.status(401).json({msg:'permission denied'})
-       }
-       const user=await User.findAll({where:{role:2}})
-       if(!user){
-           return res.status(401).json({msg:'users not found'})
-       }
-       const newUsers=user.map((item)=>{
-           return {
-               id:item.uuid,
-               name:item.company_name,
-           }
-       })
-       return res.status(200).json(newUsers)
+        const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:0}})
+        if(!isAdmin){
+            return res.status(401).json({msg:'permission denied'})
+        }
+        const user=await User.findAll({where:{role:2}})
+        if(!user){
+            return res.status(401).json({msg:'users not found'})
+        }
+        const newUsers=user.map((item)=>{
+            return {
+                id:item.uuid,
+                name:item.company_name,
+            }
+        })
+        return res.status(200).json(newUsers)
    } catch (error) {
        return res.status(400).json(error)
    }
