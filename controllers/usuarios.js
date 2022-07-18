@@ -41,7 +41,8 @@ const mostrarUsers=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const user=await User.findAll({where:{role:2},limit:Number(to),offset:Number(from),subQuery:false})
+        //const user=await User.findAll({where:{role:2},limit:Number(to),offset:Number(from),subQuery:false})
+        const user=await User.findAll({where:{role:2}})
         if(!user){
             return res.status(401).json({msg:'users not found'})
         }
@@ -72,6 +73,7 @@ const mostrarUsers=async(req,res)=>{
        return res.status(400).json(error)
    }
 }
+
 const mostrarUsersNameToken=async(req,res)=>{
     try {
         const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:0}})
