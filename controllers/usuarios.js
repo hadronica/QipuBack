@@ -80,7 +80,7 @@ const mostrarUsersNameToken=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const user=await User.findAll({where:{role:2}})
+        const user=await User.findAll({order:[['company_name','ASC']],where:{role:2}})
         if(!user){
             return res.status(401).json({msg:'users not found'})
         }
@@ -102,7 +102,7 @@ const mostrarUsersNameTokenOperador=async(req,res)=>{
             return res.status(401).json({msg:'permission denied'})
         }
         const operator=await Operator.findOne({where:{uuid:isAdmin.uuid}})
-        const contacts=await User.findAll({where:{operatorId:operator.id}})
+        const contacts=await User.findAll({order:[['name','ASC']],where:{operatorId:operator.id}})
         if(!contacts){
             return res.status(401).json({msg:'users not found'})
         }
@@ -177,7 +177,7 @@ const mostrarOperadores=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const operadores= await Operator.findAll({include:[User]})
+        const operadores= await Operator.findAll({order:[['company_name','ASC']],include:[User]})
         const newOperadores=operadores.map(item=>{
             return {
                 id:item.uuid,
@@ -234,7 +234,7 @@ const mostrarUsersOperador=async(req,res)=>{
            return res.status(401).json({msg:'permission denied'})
        }
        const operator= await Operator.findOne({where:{uuid:req.headers.token}})
-       const user=await User.findAll({where:{operatorId:operator.id}})
+       const user=await User.findAll({order:[['company_name','ASC']],where:{operatorId:operator.id}})
        if(!user){
            return res.status(401).json({msg:'users not found'})
        }

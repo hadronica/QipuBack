@@ -19,7 +19,10 @@ const crearContacto=async(req,res)=>{
 const listarContactos=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
-        const pagadores=await Contact.findAll({where:{userId:user.id}})
+        const pagadores=await Contact.findAll({order:[['full_name','ASC']],where:{userId:user.id}})
+        if(!pagadores){
+            return res.status(401).json({msg:'contacts not found'})
+        }
         return res.status(200).json({pagadores})
     } catch (error) {
         console.log(error)
@@ -37,7 +40,7 @@ const listarContactosporUser=async(req,res)=>{
         if(!user){
             return res.status(401).json({msg:'client not found'})
         }
-        const contacts= await Contact.findAll({where:{userId:user.id}})
+        const contacts= await Contact.findAll({order:[['full_name','ASC']],where:{userId:user.id}})
         const pagadores=contacts.map(item=>{
             return {
                 name:item.full_name
@@ -53,7 +56,7 @@ const listarContactosporUser=async(req,res)=>{
 const listarContactosName=async(req,res)=>{
 try {
     const user=await User.findOne({where:{uuid:req.headers.token}})
-    const pagadores=await Contact.findAll({where:{userId:user.id}})
+    const pagadores=await Contact.findAll({order:[['full_name','ASC']],where:{userId:user.id}})
     const newPagadores=pagadores.map((item)=>{
         return {
             name:item.full_name,
@@ -86,7 +89,7 @@ const listarContactosUserAdmin=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const contacts=await User.findAll({where:{role:2},include:[Contact]})
+        const contacts=await User.findAll({order:[['company_name','ASC']],where:{role:2},include:[Contact]})
         const usercontact=contacts.map((item)=>{
             return {
                 id:item.uuid,
@@ -121,7 +124,7 @@ const listarContactosUserOperator=async(req,res)=>{
             return res.status(401).json({msg:'permission denied'})
         }
         const operator=await Operator.findOne({where:{uuid:isAdmin.uuid}})
-        const contacts=await User.findAll({where:{operatorId:operator.id},include:[Contact]})
+        const contacts=await User.findAll({order:[['company_name','ASC']],where:{operatorId:operator.id},include:[Contact]})
         const usercontact=contacts.map((item)=>{
             return {
                 id:item.uuid,
