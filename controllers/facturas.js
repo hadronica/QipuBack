@@ -63,7 +63,9 @@ const getInfoAdmin=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const bills=await User.findAll({order:[['company_name','ASC']],where:{role:2},include:[Billing]})
+        const bills=await User.findAll({
+            where:{role:2},include:[Billing],order:[['company_name','ASC'],[Billing,'contactName','ASC']]
+        })
         if(bills.length===0){
             return res.status(200).json({msg:'billings not found'})
         }
@@ -116,7 +118,9 @@ const getInfoOperator=async(req,res)=>{
             return res.status(401).json({msg:'permission denied'})
         }
         const operator=await Operator.findOne({where:{uuid:isAdmin.uuid}})
-        const bills=await User.findAll({order:[['company_name','ASC']],where:{role:2,operatorId:operator.id},include:[Billing]})
+        const bills=await User.findAll({
+            where:{role:2,operatorId:operator.id},include:[Billing],order:[['company_name','ASC'],[Billing,'contactName','ASC']]
+        })
         if(bills.length===0){
             return res.status(200).json({msg:'billings not found'})
         }
@@ -280,7 +284,9 @@ const getOperation=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const operation=await Operation.findAll({order:[['name','ASC']],include:[Billing]})
+        const operation=await Operation.findAll({
+            include:[Billing],order:[['name','ASC'],[Billing,'contactName','ASC']]
+        })
         const newOperation=operation.map(item=>{
             return {
                 n_operation:item.n_operation,

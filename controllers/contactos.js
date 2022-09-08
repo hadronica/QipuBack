@@ -89,7 +89,10 @@ const listarContactosUserAdmin=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const contacts=await User.findAll({order:[['company_name','ASC']],where:{role:2},include:[Contact]})
+        const contacts=await User.findAll({
+            where:{role:2},
+            include:[Contact],order:[['company_name','ASC'],[Contact,'full_name','ASC']],
+        })
         const usercontact=contacts.map((item)=>{
             return {
                 id:item.uuid,
@@ -124,7 +127,9 @@ const listarContactosUserOperator=async(req,res)=>{
             return res.status(401).json({msg:'permission denied'})
         }
         const operator=await Operator.findOne({where:{uuid:isAdmin.uuid}})
-        const contacts=await User.findAll({order:[['company_name','ASC']],where:{operatorId:operator.id},include:[Contact]})
+        const contacts=await User.findAll({
+            where:{operatorId:operator.id},include:[Contact],order:[['company_name','ASC'],[Contact,'full_name','ASC']]
+        })
         const usercontact=contacts.map((item)=>{
             return {
                 id:item.uuid,

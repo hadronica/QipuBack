@@ -177,7 +177,9 @@ const mostrarOperadores=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
-        const operadores= await Operator.findAll({order:[['company_name','ASC']],include:[User]})
+        const operadores= await Operator.findAll({
+            include:[User],order:[['name','ASC'],[User,'company_name','ASC']]
+        })
         const newOperadores=operadores.map(item=>{
             return {
                 id:item.uuid,
