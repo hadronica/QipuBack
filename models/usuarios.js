@@ -75,6 +75,12 @@ const UserModel=sequelize.define('users',{
         },
         operator_name:{
             type:Sequelize.STRING
+        },
+        bank_acc:{
+            type:Sequelize.STRING
+        },
+        bank_name:{
+            type:Sequelize.STRING
         }
 },{
     hooks:{
