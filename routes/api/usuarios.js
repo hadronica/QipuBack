@@ -79,7 +79,7 @@ router.put('/editpass',[
     check('email').custom(noExisteEmail)
 ],editPassword)
 
-
+router.delete('/deleteuser',deleteUser)
 
 
 module.exports=router
