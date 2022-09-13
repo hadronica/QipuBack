@@ -65,7 +65,9 @@ const mostrarUsers=async(req,res)=>{
                 pep:item.pep,
                 validity:item.validity,
                 updatedAt:item.updatedAt,
-                operator_name:item.operator_name
+                operator_name:item.operator_name,
+                bank_acc:item.bank_acc,
+                bank_name:item.bank_name
             }
         })
         return res.status(200).json(newUsers)
@@ -204,6 +206,8 @@ const mostrarOperadores=async(req,res)=>{
                         pep:i.pep,
                         validity:i.validity,
                         updatedAt:i.updatedAt,
+                        bank_acc:item.bank_acc,
+                        bank_name:item.bank_name
                     }
                 })
             }
@@ -259,6 +263,8 @@ const mostrarUsersOperador=async(req,res)=>{
                pep:item.pep,
                validity:item.validity,
                updatedAt:item.updatedAt,
+               bank_acc:item.bank_acc,
+               bank_name:item.bank_name,
            }
        })
        return res.status(200).json(newUsers)
