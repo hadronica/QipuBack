@@ -7,7 +7,7 @@ const router=require('express').Router()
 router.post('/listfiles',listFiles)
 
 router.post('/upload/:type',[
-    check('type').isIn(['ruc','dni','rtt','repre','info']),
+    check('type').isIn(['ruc','dni','rtt','repre','info','otros']),
     validarCampo
 ],uploadFile)
 
