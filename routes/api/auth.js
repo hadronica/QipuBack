@@ -1,3 +1,4 @@
+const fs=require('fs')
 const {check}=require('express-validator')
 const { validarCampo } = require('../../middlewares/validarCampo')
 const User=require('../../models/usuarios')
@@ -42,6 +43,15 @@ router.post('/token',async(req,res)=>{
     }
 })
 
+router.post('/ruc_verify',async(req,res)=>{
+    const {ruc}=req.body
+    const rucs=JSON.parse(fs.readFileSync('./ruc.json', 'utf8'))
+    const validatedRuc=rucs.some(i=>i.RUC==ruc)
+    if(!validatedRuc){
+        return res.status(401).json({validate:false})
+    }
+    return res.status(200).json({validate:true})
+})
 
 module.exports=router
 
