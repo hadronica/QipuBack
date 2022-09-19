@@ -5,6 +5,9 @@ const {templateResetear, emailResetear, templateVerificar, emailVerificar, email
 const { v4: uuidv4 } = require('uuid');
 const { customAlphabet } = require('nanoid');
 const nanoid=customAlphabet('1234567890abcdefghijklmnopqrstuvwx')
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
+
 
 const emailUser=async(req,res)=>{
     try {
@@ -41,8 +44,9 @@ const mostrarUsers=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
+        const{search}=req.query
+        const user=await User.findAll({order:[['company_name','ASC']],where:{role:2,company_name:{[Op.like]:`%${search}%`}}})
         //const user=await User.findAll({where:{role:2},limit:Number(to),offset:Number(from),subQuery:false})
-        const user=await User.findAll({order:[['company_name','ASC']],where:{role:2}})
         if(!user){
             return res.status(401).json({msg:'users not found'})
         }
@@ -72,7 +76,8 @@ const mostrarUsers=async(req,res)=>{
         })
         return res.status(200).json(newUsers)
    } catch (error) {
-       return res.status(400).json(error)
+        console.log(error)
+        return res.status(400).json(error)
    }
 }
 

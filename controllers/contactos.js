@@ -2,6 +2,8 @@ const User=require('../models/usuarios')
 const Contact=require('../models/contactos')
 const Operator=require('../models/operadores')
 const { nanoid } = require('nanoid')
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 const crearContacto=async(req,res)=>{
     try {
@@ -19,11 +21,13 @@ const crearContacto=async(req,res)=>{
 const listarContactos=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
-        const pagadores=await Contact.findAll({order:[['full_name','ASC']],where:{userId:user.id}})
+        const{search}=req.query
+        const pagadores=await Contact.findAll({order:[['full_name','ASC']],
+        where:{userId:user.id,[Op.or]:[{full_name:{[Op.like]:`%${search}%`}},{name_debtor:{[Op.like]:`%${search}%`}}]}})
         if(!pagadores){
             return res.status(401).json({msg:'contacts not found'})
         }
-        return res.status(200).json({pagadores})
+        return res.status(200).json(pagadores)
     } catch (error) {
         console.log(error)
         return res.status(400).json(error)
@@ -89,8 +93,9 @@ const listarContactosUserAdmin=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
+        const {search}=req.query
         const contacts=await User.findAll({
-            where:{role:2},
+            where:{role:2,[Op.or]:[{company_name:{[Op.like]:`%${search}%`}}]},
             include:[Contact],order:[['company_name','ASC'],[Contact,'full_name','ASC']],
         })
         const usercontact=contacts.map((item)=>{
@@ -126,9 +131,11 @@ const listarContactosUserOperator=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
+        const {search}=req.query
         const operator=await Operator.findOne({where:{uuid:isAdmin.uuid}})
-        const contacts=await User.findAll({
-            where:{operatorId:operator.id},include:[Contact],order:[['company_name','ASC'],[Contact,'full_name','ASC']]
+        const contacts=await User.findAll({include:[Contact],
+            where:{operatorId:operator.id,[Op.or]:[{company_name:{[Op.like]:`%${search}%`}}]},
+            order:[['company_name','ASC'],[Contact,'full_name','ASC']]
         })
         const usercontact=contacts.map((item)=>{
             return {

@@ -6,6 +6,9 @@ const Operator=require('../models/operadores')
 const fs=require('fs')
 require('dotenv').config()
 const { nanoid } = require('nanoid')
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
+
 
 const aws=require('aws-sdk')
 const s3=new aws.S3({
@@ -18,7 +21,8 @@ const awsUrl=process.env.AWSURL
 const getInfo=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
-        const bills=await Billing.findAll({order:[['contactName','ASC']],where:{userId:user.id}})
+        const{search}=req.query
+        const bills=await Billing.findAll({order:[['contactName','ASC']],where:{userId:user.id,contactName:{[Op.like]:`%${search}%`}}})
         if(bills.length==0){
             return res.status(200).json({msg:'billings not found'})
         }
@@ -63,8 +67,9 @@ const getInfoAdmin=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
+        const{search}=req.query
         const bills=await User.findAll({
-            where:{role:2},include:[Billing],order:[['company_name','ASC'],[Billing,'contactName','ASC']]
+            where:{role:2,company_name:{[Op.like]:`%${search}%`}},include:[Billing],order:[['company_name','ASC'],[Billing,'contactName','ASC']]
         })
         if(bills.length===0){
             return res.status(200).json({msg:'billings not found'})
@@ -117,9 +122,10 @@ const getInfoOperator=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
+        const{search}=req.query
         const operator=await Operator.findOne({where:{uuid:isAdmin.uuid}})
         const bills=await User.findAll({
-            where:{role:2,operatorId:operator.id},include:[Billing],order:[['company_name','ASC'],[Billing,'contactName','ASC']]
+            where:{role:2,operatorId:operator.id,company_name:{[Op.like]:`%${search}%`}},include:[Billing],order:[['company_name','ASC'],[Billing,'contactName','ASC']]
         })
         if(bills.length===0){
             return res.status(200).json({msg:'billings not found'})
@@ -284,8 +290,9 @@ const getOperation=async(req,res)=>{
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
+        const {search}=req.query
         const operation=await Operation.findAll({
-            include:[Billing],order:[['name','ASC'],[Billing,'contactName','ASC']]
+            where:{[Op.or]:[{n_operation:{[Op.like]:`%${search}%`}},{name:{[Op.like]:`%${search}%`}}]},include:[Billing],order:[['name','ASC'],[Billing,'contactName','ASC']]
         })
         const newOperation=operation.map(item=>{
             return {
