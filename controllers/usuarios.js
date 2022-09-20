@@ -148,6 +148,7 @@ const crearUserOperator=async(req,res)=>{
         req.body.operator_name=operator.name
         req.body.password=bcrypt.hashSync(req.body.password)
         req.body.uuid=uuidv4()
+        req.body.status=0
         const user= await User.create(req.body)
         const template= templateVerificar(user.name,user.email,user.ruc,user.company_name)
         await emailVerificar(req.body.email,template)
@@ -165,11 +166,15 @@ const crearUserAdmin=async(req,res)=>{
         }
         req.body.password=bcrypt.hashSync(req.body.password)
         req.body.uuid=uuidv4()
+        req.body.status=0
         const user= await User.create(req.body)
         if(user.role==="1"){
             await Operator.create({name:req.body.name,uuid:user.uuid,email:req.body.email})
+            const template= templateVerificarAdmin(user.name,user.email)
+            await emailVerificar(req.body.email,template)
+            return res.status(200).json({status:user.status,role:user.role,id:user.uuid})
         }
-        const template= templateVerificarAdmin(user.name,user.email)
+        const template= templateVerificar(user.name,user.email)
         await emailVerificar(req.body.email,template)
         return res.status(200).json({status:user.status,role:user.role,id:user.uuid})
     } catch (error) {
@@ -336,7 +341,7 @@ const resetPassword=async(req,res)=>{
     try {
         if(password===password2){
             const newPassword=bcrypt.hashSync(password)
-            await user.update({password:newPassword},{where:{resetpass:token}})
+            await user.update({password:newPassword,status:1},{where:{resetpass:token}})
             res.status(200).json({msg:'password updated successfully'})
         }else{
             return res.status(401).json({msg:'invalid password'})
