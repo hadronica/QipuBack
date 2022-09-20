@@ -59,7 +59,6 @@ router.post('/sign-in-operator',[
 
 //RECUPERAR CONTRASEÑA---
 router.post('/forgot-password',[
-    check('ruc').custom(noExisteRuc),
     check('email').isEmail(),
     check('email').custom(noExisteEmail),
     validarCampo

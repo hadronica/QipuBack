@@ -319,15 +319,28 @@ const loginUser=async(req,res)=>{
 
 const forgotPassword=async(req,res)=>{
     try {
-        const {email,ruc}=req.body
-        const user= await User.findOne({where:{ruc:ruc,email:email}})
-        const token=nanoid(6).toLocaleUpperCase()
-        await user.update({resetpass:token},{where:{ruc:ruc}})
-        const template= templateResetear(user.name,token,user.email)
-        await emailResetear(email,template)
-        return res.json({msg:'token sent'})
+        const {email}=req.body
+        const user= await User.findOne({where:{email:email}})
+        if(user.role!=2){
+            const token=nanoid(6).toLocaleUpperCase()
+            await user.update({resetpass:token},{where:{email:email}})
+            const template= templateResetear(user.name,token,user.email)
+            await emailResetear(email,template)
+            return res.json({msg:'token sent'})  
+        }
+        else{
+            const {ruc}=req.body
+            const user= await User.findOne({where:{email:email}})
+            const token=nanoid(6).toLocaleUpperCase()
+            await user.update({resetpass:token},{where:{ruc:ruc}})
+            const template= templateResetear(user.name,token,user.email)
+            await emailResetear(email,template)
+            return res.json({msg:'token sent'})
+        }
+        
         
     } catch (error) {
+        console.log(error)
         return res.status(400).json(error)
     }
 }
