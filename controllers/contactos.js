@@ -95,8 +95,8 @@ const listarContactosUserAdmin=async(req,res)=>{
         }
         const {search}=req.query
         const contacts=await User.findAll({
-            where:{role:2,[Op.or]:[{company_name:{[Op.like]:`%${search}%`}}]},
-            include:[Contact],order:[['company_name','ASC'],[Contact,'full_name','ASC']],
+            include:[Contact],where:{role:2,[Op.or]:[{company_name:{[Op.like]:`%${search}%`}}]},
+            order:[['company_name','ASC'],[Contact,'full_name','ASC']],
         })
         const usercontact=contacts.map((item)=>{
             return {
