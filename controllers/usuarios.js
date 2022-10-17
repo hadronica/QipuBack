@@ -7,6 +7,7 @@ const { customAlphabet } = require('nanoid');
 const nanoid=customAlphabet('1234567890abcdefghijklmnopqrstuvwx')
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
+const dayjs = require('dayjs')
 
 
 const emailUser=async(req,res)=>{
@@ -41,6 +42,7 @@ const mostrarUsers=async(req,res)=>{
     try {
         const isAdmin=await User.findOne({where:{uuid:req.headers.token,role:[0,1]}})
         const {from,to}=req.query
+        const today=dayjs().format('YYYY-MM-DD')
         if(!isAdmin){
             return res.status(401).json({msg:'permission denied'})
         }
@@ -51,6 +53,12 @@ const mostrarUsers=async(req,res)=>{
             return res.status(401).json({msg:'users not found'})
         }
         const newUsers=user.map((item)=>{
+            const days=dayjs(item.validity).diff(dayjs(today),'day')
+            let caducity=false
+            if(days>0&&days<=5){
+                caducity=days} 
+            else if(days<0){
+                caducity=true}
             return {
                 id:item.uuid,
                 name:item.name,
@@ -68,6 +76,7 @@ const mostrarUsers=async(req,res)=>{
                 email_r:item.email_r,
                 pep:item.pep,
                 validity:item.validity,
+                caducity:caducity,
                 updatedAt:item.updatedAt,
                 operator_name:item.operator_name,
                 bank_acc:item.bank_acc,
