@@ -3,12 +3,14 @@ const Billing=require('../models/facturas')
 const Contact=require('../models/contactos')
 const Operation=require('../models/operaciones')
 const Operator=require('../models/operadores')
+const FileReader = require('filereader')
 const fs=require('fs')
 require('dotenv').config()
 const { nanoid } = require('nanoid')
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
-
+const xml2js = require('xml2js');
+const decompress=require('decompress')
 
 const aws=require('aws-sdk')
 const s3=new aws.S3({
@@ -357,6 +359,42 @@ const editOperation=async(req,res)=>{
     }
 }
 
+const createBulk=async(req,res)=>{
+    try {
+        const user=await User.findOne({where:{uuid:req.headers.token}})
+        const parser = new xml2js.Parser();
+        const zipFile=req.files.zip
+        const tempZipPath=zipFile.tempFilePath
+        const files=await decompress(tempZipPath,"./temp",{
+            filter: file => file.path.includes('.xml') || file.path.includes('.PDF')  || file.path.includes('.pdf') || file.path.includes('.XML')
+        })
+        const filesXML=files.filter(item=>item.path.includes('.xml') || item.path.includes('.XML'))
+        const filesPDF=files.filter(item=>item.path.includes('.pdf') || item.path.includes('.PDF'))
+        const filereader= new FileReader()
+        console.log(filesXML[0].data)
+        filereader.readAsArrayBuffer(filesXML[0].data)
+        filereader.addEventListener('load',function(data){
+        console.log(data.target.result)
+        })
+        filereader.onload=async()=>{
+            const file=filereader.result
+            const data=await parser.parseStringPromise(file)
+            console.log(data)
+        }
+        // const xml=await filereader.readAsBinaryString(filesXML[0].data)
+        // console.log(xml)
+
+        // const xml = fs.readFileSync(tempXmlPath, 'utf8')
+        // const result=await parser.parseStringPromise(xml)
+
+        // console.log(files)
+        return res.json({msg:'ok'})
+    } catch (error) {
+        console.log(error)
+        return res.status(400).json(error)
+    }
+}
+
 module.exports={
     getInfo,
     getInfoAdmin,
@@ -366,5 +404,6 @@ module.exports={
     operationBill,
     getOperation,
     editOperation,
-    getInfoOperator
+    getInfoOperator,
+    createBulk
 }
