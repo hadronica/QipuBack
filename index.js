@@ -8,7 +8,7 @@ require('dotenv').config()
 require('./db')
 
 
-const port=process.env.PORT||8000
+const port=process.env.PORT||8080
 const apiRouter=require('./routes/api')
 const bodyParser=require('body-parser')
 

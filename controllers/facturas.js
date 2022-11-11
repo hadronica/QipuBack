@@ -246,7 +246,7 @@ const createBill=async(req,res)=>{
         req.body.xmlLink=`${userRuc}/pagadores/${newContact}/XML${req.body.billing_id}`
         await Billing.create(req.body)
         return res.status(200).json({msg:'created successfully'})
-} 
+}
     catch (error) {
         console.log(error)
         return res.status(400).json(error)
@@ -361,7 +361,7 @@ const editOperation=async(req,res)=>{
 
 const createBulk=async(req,res)=>{
     try {
-        const user=await User.findOne({where:{uuid:req.headers.token}})
+        // const user=await User.findOne({where:{uuid:req.headers.token}})
         const parser = new xml2js.Parser();
         const zipFile=req.files.zip
         const tempZipPath=zipFile.tempFilePath
@@ -370,17 +370,37 @@ const createBulk=async(req,res)=>{
         })
         const filesXML=files.filter(item=>item.path.includes('.xml') || item.path.includes('.XML'))
         const filesPDF=files.filter(item=>item.path.includes('.pdf') || item.path.includes('.PDF'))
-        const filereader= new FileReader()
-        console.log(filesXML[0].data)
-        filereader.readAsArrayBuffer(filesXML[0].data)
-        filereader.addEventListener('load',function(data){
-        console.log(data.target.result)
-        })
-        filereader.onload=async()=>{
-            const file=filereader.result
-            const data=await parser.parseStringPromise(file)
-            console.log(data)
-        }
+        const dataXml=filesXML[0].data
+        const result=await parser.parseStringPromise(dataXml)
+
+        // Datos XML
+        const RUC = result.Invoice['cac:AccountingSupplierParty'][0]['cac:Party'][0]['cac:PartyIdentification'][0]['cbc:ID'][0]['_']
+        const nameClient= result.Invoice['cac:AccountingSupplierParty'][0]['cac:Party'][0]['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0]
+        const numberInvoice = result.Invoice['cbc:ID'][0]
+        const rucClient = result.Invoice['cac:AccountingCustomerParty'][0]['cac:Party'][0]['cac:PartyIdentification'][0]['cbc:ID'][0]['_']
+        const amount = result.Invoice['cac:InvoiceLine'][0]['cac:PricingReference'][0]['cac:AlternativeConditionPrice'][0]['cbc:PriceAmount'][0]['_']
+        const dateEmission =  result.Invoice['cbc:IssueDate'][0]
+        const namePayer= result.Invoice['cac:AccountingCustomerParty'][0]['cac:Party'][0]['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0]
+
+          const objMuestra = {
+            numeroFactura: numberInvoice,
+            monto: amount,
+            nombreClient: nameClient,
+            RUC: RUC,
+            nombrePagador: namePayer || '',
+            RUCPagador: rucClient,
+            fechaEmision: dateEmission,
+          }
+          console.table(objMuestra)
+
+
+
+        // console.log(dataXml)
+        // filereader.readAsDataURL(dataXml)
+        // filereader.addEventListener('load',function(data){
+        // console.log(data.target.result)
+        // })
+
         // const xml=await filereader.readAsBinaryString(filesXML[0].data)
         // console.log(xml)
 
