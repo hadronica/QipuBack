@@ -361,11 +361,15 @@ const editOperation=async(req,res)=>{
 const createBulk=async(req,res)=>{
     try {
         const user=await User.findOne({where:{uuid:req.headers.token}})
+        const contact=await Contact.findOne({where:{uuid:req.headers.contact}})
         req.body.userId=user.id
         req.body.userUuid=user.uuid
         req.body.bank_name=user.bank_name
         req.body.account=user.bank_acc
+        req.body.contactName=contact.full_name
         req.body.uuid=nanoid(10)
+        const contactName=contact.full_name
+        const newContact=contactName.replaceAll(" ","")
         const parser = new xml2js.Parser();
         const zipFile=req.files.zip
         const tempZipPath=zipFile.tempFilePath
@@ -375,20 +379,38 @@ const createBulk=async(req,res)=>{
         const filesXML=files.filter(item=>item.path.includes('.xml') || item.path.includes('.XML'))
         const filesPDF=files.filter(item=>item.path.includes('.pdf') || item.path.includes('.PDF'))
         const dataXml=filesXML[0].data
+        const dataPdf=filesPDF[0].data
         const result=await parser.parseStringPromise(dataXml)
-
-        const RUC = result.Invoice['cac:AccountingSupplierParty'][0]['cac:Party'][0]['cac:PartyIdentification'][0]['cbc:ID'][0]['_']
-        const nameClient= result.Invoice['cac:AccountingSupplierParty'][0]['cac:Party'][0]['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0]
+        const tempPdfPath=filesPDF[0].path
+        fs.readFile(tempPdfPath, function(err, data) {
+            let params={Bucket:process.env.AWSBUCKET,Key:`${user.ruc}/pagadores/${newContact}/PDF${result.Invoice['cbc:ID'][0]}`,Body: dataPdf,ACL: 'public-read',ContentType:filesPDF.mimetype}
+            s3.upload(params, function(err, data) {
+                fs.unlink('./temp/'+tempPdfPath, function(err) {
+                    if (err) {
+                      throw new Error(err)
+                    }
+                })
+            })
+        })
+        const tempXmlPath=filesXML[0].path
+        fs.readFile(tempXmlPath, function(err, data) {
+            let params={Bucket:process.env.AWSBUCKET,Key:`${user.ruc}/pagadores/${newContact}/XML${result.Invoice['cbc:ID'][0]}`,Body: dataXml,ACL: 'public-read',ContentType:filesXML.mimetype}
+            s3.upload(params, function(err, data) {
+                fs.unlink('./temp/'+tempXmlPath, function(err) {
+                    if (err) {
+                      throw new Error(err)
+                    }
+                })
+            })
+        })
+        req.body.pdfLink=`${user.ruc}/pagadores/${newContact}/PDF${result.Invoice['cbc:ID'][0]}`
+        req.body.xmlLink=`${user.ruc}/pagadores/${newContact}/XML${result.Invoice['cbc:ID'][0]}`
         req.body.billing_id = result.Invoice['cbc:ID'][0]
-        const rucClient = result.Invoice['cac:AccountingCustomerParty'][0]['cac:Party'][0]['cac:PartyIdentification'][0]['cbc:ID'][0]['_']
         const typeCoin = result.Invoice['cac:InvoiceLine'][0]['cac:Price'][0]['cbc:PriceAmount'][0]['$'].currencyID==='PEN'?'S/':'$'
         req.body.amount= typeCoin+result.Invoice['cac:InvoiceLine'][0]['cac:PricingReference'][0]['cac:AlternativeConditionPrice'][0]['cbc:PriceAmount'][0]['_']
         req.body.date_emission =  result.Invoice['cbc:IssueDate'][0]
-        const namePayer= result.Invoice['cac:AccountingCustomerParty'][0]['cac:Party'][0]['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0]
-
-        //Detracción y monto neto
-        const detraction=typeCoin + result.Invoice['cac:InvoiceLine'][0]['cac:TaxTotal'][0]['cbc:TaxAmount'][0]['_']
-        const amountNet= typeCoin + result.Invoice['cac:InvoiceLine'][0]['cbc:LineExtensionAmount'][0]['_']
+        req.body.detraction=typeCoin + result.Invoice['cac:InvoiceLine'][0]['cac:TaxTotal'][0]['cbc:TaxAmount'][0]['_']
+        req.body.net_amount= typeCoin + result.Invoice['cac:InvoiceLine'][0]['cbc:LineExtensionAmount'][0]['_']
 
         await Billing.create(req.body)
         return res.status(200).json({msg:'created successfully'})
