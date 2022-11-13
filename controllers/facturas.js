@@ -382,19 +382,10 @@ const createBulk=async(req,res)=>{
         req.body.amount= result.Invoice['cac:InvoiceLine'][0]['cac:PricingReference'][0]['cac:AlternativeConditionPrice'][0]['cbc:PriceAmount'][0]['_']
         req.body.date_emission =  result.Invoice['cbc:IssueDate'][0]
         const namePayer= result.Invoice['cac:AccountingCustomerParty'][0]['cac:Party'][0]['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0]
+        const typeCoin = result.Invoice['cac:InvoiceLine'][0]['cac:Price'][0]['cbc:PriceAmount'][0]['$'].currencyID==='PEN'?'S/':'$'
 
-        // const objMuestra = {
-        //   numeroFactura: numberInvoice,
-        //   monto: amount,
-        //   nombreClient: nameClient,
-        //   RUC: RUC,
-        //   nombrePagador: namePayer || '',
-        //   RUCPagador: rucClient,
-        //   fechaEmision: dateEmission,
-        // }
-        
-        // console.table(objMuestra)
-        
+
+
         await Billing.create(req.body)
         return res.status(200).json({msg:'ok'})
     } catch (error) {
