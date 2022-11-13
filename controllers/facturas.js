@@ -363,6 +363,8 @@ const createBulk=async(req,res)=>{
         const user=await User.findOne({where:{uuid:req.headers.token}})
         req.body.userId=user.id
         req.body.userUuid=user.uuid
+        req.body.bank_name=user.bank_name
+        req.body.account=user.bank_acc
         req.body.uuid=nanoid(10)
         const parser = new xml2js.Parser();
         const zipFile=req.files.zip
@@ -379,18 +381,18 @@ const createBulk=async(req,res)=>{
         const nameClient= result.Invoice['cac:AccountingSupplierParty'][0]['cac:Party'][0]['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0]
         req.body.billing_id = result.Invoice['cbc:ID'][0]
         const rucClient = result.Invoice['cac:AccountingCustomerParty'][0]['cac:Party'][0]['cac:PartyIdentification'][0]['cbc:ID'][0]['_']
-        req.body.amount= result.Invoice['cac:InvoiceLine'][0]['cac:PricingReference'][0]['cac:AlternativeConditionPrice'][0]['cbc:PriceAmount'][0]['_']
+        const typeCoin = result.Invoice['cac:InvoiceLine'][0]['cac:Price'][0]['cbc:PriceAmount'][0]['$'].currencyID==='PEN'?'S/':'$'
+        req.body.amount= typeCoin+result.Invoice['cac:InvoiceLine'][0]['cac:PricingReference'][0]['cac:AlternativeConditionPrice'][0]['cbc:PriceAmount'][0]['_']
         req.body.date_emission =  result.Invoice['cbc:IssueDate'][0]
         const namePayer= result.Invoice['cac:AccountingCustomerParty'][0]['cac:Party'][0]['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0]
-        const typeCoin = result.Invoice['cac:InvoiceLine'][0]['cac:Price'][0]['cbc:PriceAmount'][0]['$'].currencyID==='PEN'?'S/':'$'
-
+        
 
 
         await Billing.create(req.body)
-        return res.status(200).json({msg:'ok'})
+        return res.status(200).json({msg:'created successfully'})
     } catch (error) {
         console.log(error)
-        return res.status(400).json({msg:'created successfully'})
+        return res.status(400).json(error)
     }
 }
 
