@@ -385,8 +385,10 @@ const createBulk=async(req,res)=>{
         req.body.amount= typeCoin+result.Invoice['cac:InvoiceLine'][0]['cac:PricingReference'][0]['cac:AlternativeConditionPrice'][0]['cbc:PriceAmount'][0]['_']
         req.body.date_emission =  result.Invoice['cbc:IssueDate'][0]
         const namePayer= result.Invoice['cac:AccountingCustomerParty'][0]['cac:Party'][0]['cac:PartyLegalEntity'][0]['cbc:RegistrationName'][0]
-        
 
+        //Detracción y monto neto
+        const detraction=typeCoin + result.Invoice['cac:InvoiceLine'][0]['cac:TaxTotal'][0]['cbc:TaxAmount'][0]['_']
+        const amountNet= typeCoin + result.Invoice['cac:InvoiceLine'][0]['cbc:LineExtensionAmount'][0]['_']
 
         await Billing.create(req.body)
         return res.status(200).json({msg:'created successfully'})
