@@ -64,7 +64,8 @@ try {
     const newPagadores=pagadores.map((item)=>{
         return {
             name:item.full_name,
-            value:item.full_name
+            value:item.full_name,
+            token:item.uuid
         }
     })
     return res.status(200).json(newPagadores)
