@@ -70,7 +70,7 @@ const getInfoAdmin=async(req,res)=>{
         }
         const{search}=req.query
         const bills=await User.findAll({
-            where:{role:2,company_name:{[Op.like]:`%${search}%`}},include:[Billing],order:[['company_name','ASC'],[Billing,'contactName','ASC']]
+            where:{company_name:{[Op.like]:`%${search}%`}},include:[Billing],order:[['company_name','ASC'],[Billing,'contactName','ASC']]
         })
         if(bills.length===0){
             return res.status(200).json({msg:'billings not found'})
