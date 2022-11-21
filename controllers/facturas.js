@@ -10,6 +10,7 @@ const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 const xml2js = require('xml2js');
 const decompress=require('decompress')
+const dayjs = require('dayjs')
 
 const aws=require('aws-sdk')
 const s3=new aws.S3({
@@ -409,7 +410,7 @@ const createBulk=async(req,res)=>{
             req.body.billing_id = result.Invoice['cbc:ID'][0]
             const typeCoin = result.Invoice['cac:InvoiceLine'][0]['cac:Price'][0]['cbc:PriceAmount'][0]['$'].currencyID==='PEN'?'S/':'$'
             req.body.amount= typeCoin+result.Invoice['cac:InvoiceLine'][0]['cac:PricingReference'][0]['cac:AlternativeConditionPrice'][0]['cbc:PriceAmount'][0]['_']
-            req.body.date_emission =  result.Invoice['cbc:IssueDate'][0].replaceAll('-','/')
+            req.body.date_emission = dayjs(result.Invoice['cbc:IssueDate'][0]).format('DD/MM/YYYY')
             req.body.detraction=typeCoin + result.Invoice['cac:InvoiceLine'][0]['cac:TaxTotal'][0]['cbc:TaxAmount'][0]['_']
             req.body.net_amount= typeCoin + result.Invoice['cac:InvoiceLine'][0]['cbc:LineExtensionAmount'][0]['_']
 
