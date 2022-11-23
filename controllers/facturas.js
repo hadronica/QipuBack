@@ -384,8 +384,9 @@ const createBulk=async(req,res)=>{
             const dataPdf=filesPDF[0].data
             const result=await parser.parseStringPromise(dataXml)
             const tempPdfPath=filesPDF[0].path
+            const rucClient = result.Invoice['cac:AccountingCustomerParty'][0]['cac:Party'][0]['cac:PartyIdentification'][0]['cbc:ID'][0]['_']
             fs.readFile(tempPdfPath, function(err, data) {
-                let params={Bucket:process.env.AWSBUCKET,Key:`${user.ruc}/pagadores/${newContact}/PDF${result.Invoice['cbc:ID'][0]}`,Body: dataPdf,ACL: 'public-read',ContentType:filesPDF.mimetype}
+                let params={Bucket:process.env.AWSBUCKET,Key:`${user.ruc}/pagadores/${newContact}/PDF${result.Invoice['cbc:ID'][0]}`,Body: dataPdf,ACL: 'public-read',ContentType:'pdf'}
                 s3.upload(params, function(err, data) {
                     fs.unlink('./temp/'+tempPdfPath, function(err) {
                         if (err) {
@@ -396,7 +397,7 @@ const createBulk=async(req,res)=>{
             })
             const tempXmlPath=filesXML[0].path
             fs.readFile(tempXmlPath, function(err, data) {
-                let params={Bucket:process.env.AWSBUCKET,Key:`${user.ruc}/pagadores/${newContact}/XML${result.Invoice['cbc:ID'][0]}`,Body: dataXml,ACL: 'public-read',ContentType:filesXML.mimetype}
+                let params={Bucket:process.env.AWSBUCKET,Key:`${user.ruc}/pagadores/${newContact}/XML${result.Invoice['cbc:ID'][0]}`,Body: dataXml,ACL: 'public-read',ContentType:'xml'}
                 s3.upload(params, function(err, data) {
                     fs.unlink('./temp/'+tempXmlPath, function(err) {
                         if (err) {
@@ -413,7 +414,6 @@ const createBulk=async(req,res)=>{
             req.body.date_emission = dayjs(result.Invoice['cbc:IssueDate'][0]).format('DD/MM/YYYY')
             req.body.detraction=typeCoin + result.Invoice['cac:InvoiceLine'][0]['cac:TaxTotal'][0]['cbc:TaxAmount'][0]['_']
             req.body.net_amount= typeCoin + result.Invoice['cac:InvoiceLine'][0]['cbc:LineExtensionAmount'][0]['_']
-
             await Billing.create(req.body)
         }
         return res.status(200).json({msg:'created successfully'})
